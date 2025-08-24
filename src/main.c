@@ -1,18 +1,21 @@
 #include "lexer.h"
 #include <stdio.h>
 
-int main() {
-    FILE *fp = fopen("codigo.txt", "r");
+int main(const int argc, char *argv[]) {
+    const char *file_path = argc > 1 ? argv[1] : "codigo.txt";
+
+    FILE *fp = fopen(file_path, "r");
     if (!fp) {
         perror("Erro ao abrir arquivo");
         return 1;
     }
 
-    Token token;
-    do {
-        token = getToken(fp);
+    while (1) {
+        Token token = getToken(fp);
         printf("Token: %-10s Tipo: %d\n", token.lexeme, token.type);
-    } while (token.type != TOKEN_EOF);
+        if (token.type == TOKEN_EOF)
+            break;
+    }
 
     fclose(fp);
     return 0;
