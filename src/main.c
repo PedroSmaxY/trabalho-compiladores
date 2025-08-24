@@ -1,8 +1,19 @@
+#include "lexer.h"
 #include <stdio.h>
-#include "../include/lexer.h"
 
-int main(int argc, char *argv[]) {
-    printf("Hello, World!\n");
-    printf("Soma de 3 + 5 = %d\n", soma(3, 5));
+int main() {
+    FILE *fp = fopen("../codigo.txt", "r");
+    if (!fp) {
+        perror("Erro ao abrir arquivo");
+        return 1;
+    }
+
+    Token token;
+    do {
+        token = getToken(fp);
+        printf("Token: %-10s Tipo: %d\n", token.lexeme, token.type);
+    } while (token.type != TOKEN_EOF);
+
+    fclose(fp);
     return 0;
 }

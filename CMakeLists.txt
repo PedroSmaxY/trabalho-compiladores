@@ -3,6 +3,7 @@ project(trabalho C)
 
 set(CMAKE_C_STANDARD 11)
 
+include_directories(include)
+
 add_executable(trabalho src/main.c
-        src/lexer.c
-        include/lexer.h)
+        src/lexer.c)
