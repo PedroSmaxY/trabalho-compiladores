@@ -55,6 +55,7 @@ dkms.conf
 *.dwo
 
 # Binaries for programs and plugins
-cmake-build-debug
+cmake-build-debug/
+build/
 
 .idea
