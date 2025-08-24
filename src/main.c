@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int main() {
-    FILE *fp = fopen("../codigo.txt", "r");
+    FILE *fp = fopen("codigo.txt", "r");
     if (!fp) {
         perror("Erro ao abrir arquivo");
         return 1;
