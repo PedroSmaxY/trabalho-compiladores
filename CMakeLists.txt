@@ -17,6 +17,10 @@ target_include_directories(lexer PUBLIC include)
 add_executable(main src/main.c)
 target_link_libraries(main PRIVATE lexer)
 
+enable_testing()
+
 add_executable(test_lexer tests/test_lexer.c)
 target_link_libraries(test_lexer PRIVATE lexer)
 target_include_directories(test_lexer PRIVATE include)
+
+add_test(NAME lexer COMMAND test_lexer)
