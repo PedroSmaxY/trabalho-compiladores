@@ -54,10 +54,9 @@ static int skipWhitespaceAndComments(FILE *fp) {
                 }
                 if (d == EOF) return EOF;
                 continue; // volta para consumir mais brancos/comentários
-            } else {
-                if (next != EOF) ungetc(next, fp);
-                return c;
             }
+            if (next != EOF) ungetc(next, fp);
+            return c;
         }
         return c;
     }
