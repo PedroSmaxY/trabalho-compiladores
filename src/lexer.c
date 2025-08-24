@@ -13,7 +13,7 @@ static const char *keywords[] = {
     "repita", "ate", "ler", "mostrar"
 };
 
-const char *tokenTypeToString(TokenType t) {
+const char *tokenTypeToString(const TokenType t) {
     switch (t) {
         case TOKEN_IDENTIFIER: return "IDENTIFIER";
         case TOKEN_INTEGER:    return "INTEGER";
@@ -42,7 +42,7 @@ static int skipWhitespaceAndComments(FILE *fp) {
             c = fgetc(fp);
         }
         if (c == '/') {
-            int next = fgetc(fp);
+            const int next = fgetc(fp);
             if (next == '*') {
                 // comentário de bloco
                 int prev = 0;
@@ -98,7 +98,7 @@ Token getToken(FILE *fp) {
         while ((c = fgetc(fp)) != EOF && isdigit(c))
             token.lexeme[i++] = (char)c;
         if (c == '.') {
-            int peek = fgetc(fp);
+            const int peek = fgetc(fp);
             if (peek != EOF && isdigit(peek)) {
                 is_real = 1;
                 token.lexeme[i++] = '.';
@@ -121,7 +121,7 @@ Token getToken(FILE *fp) {
     if (strchr("=<>!&|", c)) {
         int i = 0;
         token.lexeme[i++] = (char)c;
-        int next = fgetc(fp);
+        const int next = fgetc(fp);
         int composed = 0;
         if ((c == '=' && next == '=') ||
             (c == '!' && next == '=') ||
