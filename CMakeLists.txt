@@ -4,7 +4,7 @@ project(trabalho C)
 set(CMAKE_C_STANDARD 11)
 
 # Copia arquivo de entrada para o build
-configure_file(${CMAKE_SOURCE_DIR}/codigo.pm ${CMAKE_BINARY_DIR}/codigo.pm COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COPYONLY)
 
 # Diretório de headers
 include_directories(include)
