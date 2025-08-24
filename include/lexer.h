@@ -2,8 +2,8 @@
 // Created by Pedro Novais on 23/08/25.
 //
 
-#ifndef TRABALHO_LEXER_H
-#define TRABALHO_LEXER_H
+#ifndef TRABALHO_COMPILADORES_LEXER_H
+#define TRABALHO_COMPILADORES_LEXER_H
 
 #include <stdio.h>
 
@@ -24,4 +24,4 @@ typedef struct {
 Token getToken(FILE *fp);
 
 
-#endif //TRABALHO_LEXER_H
+#endif //TRABALHO_COMPILADORES_LEXER_H
