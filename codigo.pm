@@ -1,1 +1,38 @@
-int main 123 + if else var1
+{
+    /* Declarações */
+    inteiro a, b, i;
+    real media;
+
+    /* Leitura de dois inteiros */
+    ler(a, b);
+
+    /* Cálculo da média (promove para real) */
+    media = (a + b) / 2;
+
+    /* Decisão */
+    se (media >= 7) entao {
+        mostrar(media);
+    } senao {
+        mostrar(media);
+    }
+
+    /* Laço enquanto: conta de 0 a 9 */
+    i = 0;
+    enquanto (i < 10) {
+        mostrar(i);
+        i = i + 1;
+    }
+
+    /* Laço repita .. ate: decrementa até zero */
+    repita {
+        i = i - 1;
+        mostrar(i);
+    } ate (i == 0);
+
+    /* Exemplo de combinação lógica */
+    se ( (a > 0 && b > 0) || media >= 5 ) entao {
+        mostrar(a);
+    } senao {
+        mostrar(b);
+    }
+}
