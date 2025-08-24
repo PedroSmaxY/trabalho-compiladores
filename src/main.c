@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int main(const int argc, char *argv[]) {
-    const char *file_path = argc > 1 ? argv[1] : "codigo.txt";
+    const char *file_path = argc > 1 ? argv[1] : "codigo.pm";
 
     FILE *fp = fopen(file_path, "r");
     if (!fp) {
