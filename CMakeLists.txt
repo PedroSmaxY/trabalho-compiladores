@@ -7,5 +7,5 @@ configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COP
 
 include_directories(include)
 
-add_executable(trabalho_compiladores src/main.c
+add_executable(main src/main.c
         src/lexer.c)
