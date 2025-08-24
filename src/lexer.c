@@ -9,8 +9,8 @@
 static int current_line = 1;
 
 static const char *keywords[] = {
-    "inteiro","real","se","entao","senao","enquanto",
-    "repita","ate","ler","mostrar"
+    "inteiro", "real", "se", "entao", "senao", "enquanto",
+    "repita", "ate", "ler", "mostrar"
 };
 
 const char *tokenTypeToString(TokenType t) {
