@@ -57,5 +57,5 @@ dkms.conf
 # Binaries for programs and plugins
 cmake-build-debug/
 build/
-
+.DS_Store
 .idea
