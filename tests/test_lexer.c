@@ -5,11 +5,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
+#endif
 #include "lexer.h"
 
-static FILE *open_memory(const char *src) {
-    return fmemopen((void*)src, strlen(src), "r");
-}
+static FILE *open_memory(const char *src);
 
 static void test_basico() {
     const char *code =
@@ -86,4 +88,40 @@ int main(void) {
     test_float();
     printf("Todos os testes passaram.\n");
     return 0;
+}
+
+static FILE *open_memory(const char *src) {
+#if defined(_WIN32) || defined(_WIN64)
+    char temp_path[MAX_PATH];
+    char temp_filename[MAX_PATH];
+
+    // Pega o caminho para a pasta temporária oficial do sistema
+    if (GetTempPathA(MAX_PATH, temp_path) == 0) {
+        perror("Nao foi possivel obter o caminho temporario");
+        exit(1);
+    }
+
+    // Pede ao Windows para criar um nome de arquivo unico e seguro nessa pasta
+    if (GetTempFileNameA(temp_path, "lexertest", 0, temp_filename) == 0) {
+        perror("Nao foi possivel criar um nome de arquivo temporario");
+        exit(1);
+    }
+
+    // Abre o arquivo temporario para leitura e escrita
+    FILE *fp = fopen(temp_filename, "w+");
+    if (fp == NULL) {
+        perror("Nao foi possivel abrir o arquivo temporario");
+        exit(1);
+    }
+
+
+    remove(temp_filename);
+
+    fputs(src, fp);
+    rewind(fp);
+
+    return fp;
+#else
+    return fmemopen((void*)src, strlen(src), "r");
+#endif
 }
