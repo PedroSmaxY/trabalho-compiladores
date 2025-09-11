@@ -16,15 +16,15 @@ typedef enum {
     TOKEN_SEPARATOR,
     TOKEN_EOF,
     TOKEN_UNKNOWN
-} TokenType;
+} ETokenType;
 
 typedef struct {
-    TokenType type;
+    ETokenType type;
     char lexeme[64];
     int line;
 } Token;
 
 Token getToken(FILE *fp);
-const char *tokenTypeToString(TokenType t);
+const char *tokenTypeToString(ETokenType t);
 
 #endif // TRABALHO_COMPILADORES_LEXER_H

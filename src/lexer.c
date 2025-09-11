@@ -13,7 +13,7 @@ static const char *keywords[] = {
     "repita", "ate", "ler", "mostrar"
 };
 
-const char *tokenTypeToString(const TokenType t) {
+const char *tokenTypeToString(const ETokenType t) {
     switch (t) {
         case TOKEN_IDENTIFIER: return "IDENTIFIER";
         case TOKEN_INTEGER:    return "INTEGER";
