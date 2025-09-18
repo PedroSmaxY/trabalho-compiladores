@@ -10,7 +10,7 @@ configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COP
 include_directories(include)
 
 # Biblioteca de utilitários
-add_library(utils src/utils.c include/utils.h)
+add_library(utils STATIC src/utils.c)
 target_include_directories(utils PUBLIC include)
 
 # Biblioteca do lexer
@@ -18,8 +18,15 @@ add_library(lexer STATIC src/lexer.c)
 target_include_directories(lexer PUBLIC include)
 target_link_libraries(lexer PRIVATE utils)
 
+# Biblioteca do parser
+add_library(parser STATIC src/parser.c)
+target_include_directories(parser PUBLIC include)
+target_link_libraries(parser PRIVATE lexer)
+target_link_libraries(parser PRIVATE utils)
+
 # Executável principal
 add_executable(main src/main.c)
+target_link_libraries(main PRIVATE parser)
 target_link_libraries(main PRIVATE utils)
 target_link_libraries(main PRIVATE lexer)
 
