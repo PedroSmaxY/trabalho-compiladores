@@ -9,12 +9,18 @@ configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COP
 # Diretório de headers
 include_directories(include)
 
+# Biblioteca de utilitários
+add_library(utils src/utils.c include/utils.h)
+target_include_directories(utils PUBLIC include)
+
 # Biblioteca do lexer
 add_library(lexer STATIC src/lexer.c)
 target_include_directories(lexer PUBLIC include)
+target_link_libraries(lexer PRIVATE utils)
 
 # Executável principal
 add_executable(main src/main.c)
+target_link_libraries(main PRIVATE utils)
 target_link_libraries(main PRIVATE lexer)
 
 enable_testing()
