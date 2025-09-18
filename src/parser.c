@@ -6,7 +6,7 @@
 #include "lexer.h"
 #include "utils.h"
 
-void parse(FILE *fp) {
+SyntaxTreeNode *parse(FILE *fp) {
     Token token = getToken(fp);
     while (token.type != TOKEN_EOF) {
         printf("Token: %s, Lexeme: %s, Line: %d\n", tokenTypeToString(token.type), token.lexeme, token.line);
@@ -14,4 +14,6 @@ void parse(FILE *fp) {
     }
     // Placeholder for parser implementation
     printf("Parsing the input file...\n");
+
+    return NULL;
 }
