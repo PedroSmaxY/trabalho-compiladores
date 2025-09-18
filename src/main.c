@@ -1,7 +1,6 @@
 #include "lexer.h"
+#include "utils.h"
 #include <stdio.h>
-
-static void print_usage(const char *prog);
 
 int main(const int argc, char *argv[]) {
     const char *file_path = (argc > 1) ? argv[1] : "codigo.txt";
@@ -20,11 +19,4 @@ int main(const int argc, char *argv[]) {
     }
     fclose(fp);
     return 0;
-}
-
-static void print_usage(const char *prog) {
-    fprintf(stderr,
-            "Uso: %s [arquivo-fonte]\n"
-            "Sem argumento, tenta abrir 'codigo.txt'.\n",
-            prog);
 }
