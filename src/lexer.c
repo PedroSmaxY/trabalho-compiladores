@@ -13,19 +13,6 @@ static const char *keywords[] = {
     "repita", "ate", "ler", "mostrar"
 };
 
-const char *tokenTypeToString(const ETokenType t) {
-    switch (t) {
-        case TOKEN_IDENTIFIER: return "IDENTIFIER";
-        case TOKEN_INTEGER:    return "INTEGER";
-        case TOKEN_FLOAT:      return "FLOAT";
-        case TOKEN_OPERATOR:   return "OPERATOR";
-        case TOKEN_KEYWORD:    return "KEYWORD";
-        case TOKEN_SEPARATOR:  return "SEPARATOR";
-        case TOKEN_EOF:        return "EOF";
-        default:               return "UNKNOWN";
-    }
-}
-
 static int isKeyword(const char *s) {
     for (size_t i = 0; i < sizeof(keywords)/sizeof(keywords[0]); i++)
         if (strcmp(s, keywords[i]) == 0) return 1;
