@@ -1,0 +1,45 @@
+<program>       ::= <decl_list> <stmt_sequence>
+
+<decl_list>     ::= { <decl> }            // zero or more declarations
+<decl>          ::= <type> <id_list> ';'
+<type>          ::= 'inteiro' | 'real'
+<id_list>       ::= ID { ',' ID }
+
+<stmt_sequence> ::= <statement> { ';' <statement> } [ ';' ]
+                  // sequence of commands separated by ';'
+                  // final ';' is accepted (the PDF says semicolon ends the command chain)
+
+<statement>     ::= <if_stmt>
+                  | <while_stmt>
+                  | <repeat_stmt>
+                  | <assign_stmt>
+                  | <read_stmt>
+                  | <write_stmt>
+                  | <block_stmt>
+
+<if_stmt>       ::= 'se' '(' <expr> ')' <single_command> [ 'senao' <single_command> ]
+<while_stmt>    ::= 'enquanto' '(' <expr> ')' <single_command>
+<repeat_stmt>   ::= 'repita' <single_command> 'ate' '(' <expr> ')'
+<assign_stmt>   ::= ID '=' <expr>
+<read_stmt>     ::= 'ler' '(' ID ')'
+<write_stmt>    ::= 'mostrar' '(' <expr> ')'
+
+<block_stmt>    ::= '{' <stmt_sequence> '}'
+
+/* <single_command> is either a statement or a block; the grammar above uses
+   the <statement> nonterminal which already allows <block_stmt> so <single_command>
+   is simply the same as <statement> but note: after se/enquanto the spec expects
+   exactly one command or a block. Your parser should enforce that. */
+
+<expr>          ::= <or_expr>
+
+<or_expr>       ::= <and_expr> { '||' <and_expr> }
+<and_expr>      ::= <rel_expr> { '&&' <rel_expr> }
+<rel_expr>      ::= <add_expr> [ ('<' | '<=' | '>' | '>=' | '==' | '!=') <add_expr> ]
+<add_expr>      ::= <mul_expr> { ('+' | '-') <mul_expr> }
+<mul_expr>      ::= <unary_expr> { ('*' | '/') <unary_expr> }
+<unary_expr>    ::= [ ('+'|'-'|'!') ] <factor>   // optional unary ops if you want '!' for NOT
+<factor>        ::= '(' <expr> ')'
+                  | ID
+                  | NUMINT
+                  | NUMREAL
