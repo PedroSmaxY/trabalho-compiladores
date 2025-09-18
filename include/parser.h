@@ -10,21 +10,20 @@
 #include "utils.h"
 #include <stdio.h>
 
-typedef enum { EnumStatementKind, EnumExpressionKind } NodeKind;
-typedef enum { IfKind, RepeatKind, AssignKind, ReadKind, WriteKind } StatementKind;
-typedef enum { OpKind, ConstKind, IdKind } ExpressionKind;
+typedef enum { ENodeStatement, ENodeExpression } ENodeKind;
+typedef enum { EStmtIf, EStmtRepeat, EStmtAssign, EStmtRead, EStmtWrite } EStatementKind;
+typedef enum { EExprOp, EExprConst, EExprId } EExpressionKind;
+typedef enum { ETypeVoid, ETypeInteger, ETypeBoolean } EExpressionType;
 
-typedef enum { Void, Integer, Boolean } ExpresionType;
-
-typedef struct treeNode {
-    struct treeNode* child[MAX_CHILDREN];
-    struct treeNode* sibling;
+typedef struct syntaxTreeNode {
+    struct syntaxTreeNode* children[MAX_CHILDREN];
+    struct syntaxTreeNode* nextSibling;
     int lineNumber;
-    NodeKind nodeKind;
-    union { StatementKind statement; ExpressionKind expression; } kind;
-    union { ETokenType operation; int val; char *name; } attribute;
-    ExpresionType type; // for type checking of expressions
-} TreeNode;
+    ENodeKind nodeKind;
+    union { EStatementKind stmt; EExpressionKind expr; } kind;
+    union { ETokenType op; int value; char *identifier; } attribute;
+    EExpressionType type;
+} SyntaxTreeNode;
 
 void parse(FILE *fp);
 
