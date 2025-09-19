@@ -9,7 +9,7 @@
     /* Cálculo da média (promove para real) */
     media = (a + b) / 2;
 
-    /* Decisão */
+    /* Decisão *
     se (media >= 7) entao {
         mostrar(media);
     } senao {
