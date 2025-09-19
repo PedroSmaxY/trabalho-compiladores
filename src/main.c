@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h> // For malloc, free
-#include <string.h> // For strlen
+#include <stdlib.h>
 #include "ast.h"
 #include "parser.h"
-#include "utils.h" // For get_token_category
+#include "utils.h"
 
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 extern int yylex(void);
@@ -28,7 +27,7 @@ int main(const int argc, char **argv) {
         return 1;
     }
 
-    // Pergar tamanho do arquivo
+    // Pegar tamanho do arquivo
     fseek(fp, 0, SEEK_END);
     const long file_size = ftell(fp);
     rewind(fp);
@@ -43,10 +42,12 @@ int main(const int argc, char **argv) {
     buffer[file_size] = '\0';
     fclose(fp);
 
-    // Analize léxica
+    // Análize léxica
     if (SHOW_LEXICAL_LOGS) {
         YY_BUFFER_STATE lex_buffer = yy_scan_string(buffer);
         yy_switch_to_buffer(lex_buffer);
+
+        printf("\n--- Saida Lexica ---\n");
 
         int token;
         while ((token = yylex())) {
