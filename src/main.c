@@ -14,7 +14,7 @@ extern void yy_switch_to_buffer(YY_BUFFER_STATE new_buffer);
 
 extern Node *ast_root;
 
-#define SHOW_LEXICAL_LOGS 1
+#define SHOW_LEXICAL_LOGS 0
 #define SHOW_PARSER_LOGS 1
 
 int main(const int argc, char **argv) {
