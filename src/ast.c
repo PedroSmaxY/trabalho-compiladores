@@ -46,7 +46,7 @@ Node* createAtribuicaoNode(Node* id, Node* expr) {
     return createNode(NODE_ATRIBUICAO, id, expr);
 }
 
-Node* createOpNode(NodeType type, Node* left, Node* right) {
+Node* createOpNode(const NodeType type, Node* left, Node* right) {
     return createNode(type, left, right);
 }
 
@@ -84,7 +84,7 @@ void printAst(const Node* node, const int level) {
     printAst(node->right, level + 1);
 }
 
-void printSemanticAst(Node* node, int level) {
+void printSemanticAst(const Node* node, const int level) {
     if (node == NULL) return;
     for (int i = 0; i < level; i++) printf("  ");
 
@@ -126,10 +126,10 @@ void printSemanticAst(Node* node, int level) {
             break;
         case NODE_LER:
             printf("Read: ");
-            Node* current = node->left;
+            const Node* current = node->left;
             while(current) {
                 if (current->type == NODE_ID_LISTA) {
-                    Node* id_node = current->right;
+                    const Node* id_node = current->right;
                     if(id_node) printf("%s", id_node->value.sval);
                     current = current->left;
                     if(current) printf(", ");
