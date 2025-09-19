@@ -143,18 +143,18 @@ void printSemanticAst(const Node* node, const int level) {
         case NODE_NUM_REAL:
             printf("Const: %f\n", node->value.fval);
             break;
-        case NODE_OP_SOMA: printf("Op: +\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_SUB: printf("Op: -\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_MULT: printf("Op: *\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_DIV: printf("Op: /\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_LT: printf("Op: <\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_GT: printf("Op: >\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_LE: printf("Op: <=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_GE: printf("Op: >=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_EQ: printf("Op: ==\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_NE: printf("Op: !=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_AND: printf("Op: &&\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_OR: printf("Op: ||\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_SOMA: printf("Op: +\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_SUB:  printf("Op: -\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_MULT: printf("Op: *\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_DIV:  printf("Op: /\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_LT:   printf("Op: <\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_GT:   printf("Op: >\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_LE:   printf("Op: <=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_GE:   printf("Op: >=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_EQ:   printf("Op: ==\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_NE:   printf("Op: !=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_AND:  printf("Op: &&\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_OP_OR:   printf("Op: ||\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
         default:
             printSemanticAst(node->left, level);
             printSemanticAst(node->right, level);
