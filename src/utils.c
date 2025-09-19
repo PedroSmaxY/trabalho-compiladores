@@ -4,13 +4,13 @@
 #include "parser.h"
 
 const char* node_type_names[] = {
-    "NODE_PROGRAMA", "NODE_BLOCO", "NODE_DECL_LISTA", "NODE_DECLARACAO", "NODE_TIPO_INTEIRO",
-    "NODE_TIPO_REAL", "NODE_ID_LISTA", "NODE_CMD_LISTA", "NODE_SE",
-    "NODE_SE_SENAO", "NODE_ENQUANTO", "NODE_REPITA_ATE", "NODE_LER",
-    "NODE_MOSTRAR", "NODE_ATRIBUICAO", "NODE_ID", "NODE_NUM_INTEIRO",
-    "NODE_NUM_REAL", "NODE_OP_SOMA", "NODE_OP_SUB", "NODE_OP_MULT",
-    "NODE_OP_DIV", "NODE_OP_AND", "NODE_OP_OR", "NODE_OP_LT", "NODE_OP_LE",
-    "NODE_OP_GT", "NODE_OP_GE", "NODE_OP_EQ", "NODE_OP_NE"
+    "NODE_PROGRAMA" ,   "NODE_BLOCO"     , "NODE_DECL_LISTA", "NODE_DECLARACAO" , "NODE_TIPO_INTEIRO",
+    "NODE_TIPO_REAL",   "NODE_ID_LISTA"  , "NODE_CMD_LISTA" , "NODE_SE"         ,
+    "NODE_SE_SENAO" ,   "NODE_ENQUANTO"  , "NODE_REPITA_ATE", "NODE_LER"        ,
+    "NODE_MOSTRAR"  ,   "NODE_ATRIBUICAO", "NODE_ID"        , "NODE_NUM_INTEIRO",
+    "NODE_NUM_REAL" ,   "NODE_OP_SOMA"   , "NODE_OP_SUB"    , "NODE_OP_MULT"    ,
+    "NODE_OP_DIV"   ,   "NODE_OP_AND"    , "NODE_OP_OR"     , "NODE_OP_LT"      , "NODE_OP_LE",
+    "NODE_OP_GT"    ,   "NODE_OP_GE"     , "NODE_OP_EQ"     , "NODE_OP_NE"
 };
 
 const char* get_token_category(const int token) {
