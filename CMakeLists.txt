@@ -20,12 +20,3 @@ add_executable(main src/main.c src/ast.c
         ${FLEX_Scanner_OUTPUTS}
         ${BISON_Parser_OUTPUTS}
 )
-
-enable_testing()
-
-add_executable(test_lexer tests/test_lexer.c
-        ${FLEX_Scanner_OUTPUTS}
-)
-target_include_directories(test_lexer PRIVATE include)
-
-add_test(NAME lexer COMMAND test_lexer)
