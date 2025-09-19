@@ -45,7 +45,7 @@ int main(const int argc, char **argv) {
 
     // Analize léxica
     if (SHOW_LEXICAL_LOGS) {
-        const YY_BUFFER_STATE lex_buffer = yy_scan_string(buffer);
+        YY_BUFFER_STATE lex_buffer = yy_scan_string(buffer);
         yy_switch_to_buffer(lex_buffer);
 
         int token;
