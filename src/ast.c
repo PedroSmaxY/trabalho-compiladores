@@ -31,7 +31,7 @@ Node* createFloatNode(const float value) {
     return newNode;
 }
 
-Node* createIdNode(char* sval) {
+Node* createIdNode(const char* sval) {
     Node* newNode = createNode(NODE_ID, NULL, NULL);
     newNode->value.sval = strdup(sval);
     return newNode;
@@ -61,7 +61,7 @@ const char* node_type_names[] = {
     "NODE_OP_GT", "NODE_OP_GE", "NODE_OP_EQ", "NODE_OP_NE"
 };
 
-void printAst(Node* node, int level) {
+void printAst(const Node* node, const int level) {
     if (node == NULL) {
         return;
     }
