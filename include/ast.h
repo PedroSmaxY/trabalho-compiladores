@@ -49,11 +49,11 @@ typedef struct Node {
 Node* createNode(NodeType type, Node* left, Node* right);
 Node* createIntNode(int value);
 Node* createFloatNode(float value);
-Node* createIdNode(char* sval);
+Node* createIdNode(const char* sval);
 Node* createIfElseNode(Node* condition, Node* if_branch, Node* else_branch);
 Node* createAtribuicaoNode(Node* id, Node* expr);
 Node* createOpNode(NodeType type, Node* left, Node* right);
 
-void printAst(Node* node, int level);
+void printAst(const Node* node, int level);
 
 #endif // AST_H
