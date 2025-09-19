@@ -3,37 +3,32 @@ project(trabalho C)
 
 set(CMAKE_C_STANDARD 11)
 
-# Copia arquivo de entrada para o build
-configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COPYONLY)
+find_package(FLEX REQUIRED)
+find_package(BISON REQUIRED)
 
-# Diretório de headers
+FLEX_TARGET(Scanner src/scanner.l ${CMAKE_CURRENT_BINARY_DIR}/scanner.c)
+BISON_TARGET(Parser src/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.c DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
+
 include_directories(include)
 
-# Biblioteca de utilitários
-add_library(utils STATIC src/utils.c)
-target_include_directories(utils PUBLIC include)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-# Biblioteca do lexer
-add_library(lexer STATIC src/lexer.c)
-target_include_directories(lexer PUBLIC include)
-target_link_libraries(lexer PRIVATE utils)
+add_compile_definitions(YYDEBUG=1)
 
-# Biblioteca do parser
-add_library(parser STATIC src/parser.c)
-target_include_directories(parser PUBLIC include)
-target_link_libraries(parser PRIVATE lexer)
-target_link_libraries(parser PRIVATE utils)
+configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COPYONLY)
 
-# Executável principal
-add_executable(main src/main.c)
-target_link_libraries(main PRIVATE parser)
-target_link_libraries(main PRIVATE utils)
-target_link_libraries(main PRIVATE lexer)
+
+add_executable(main src/main.c src/ast.c
+        ${FLEX_Scanner_OUTPUTS}
+        ${BISON_Parser_OUTPUTS}
+)
 
 enable_testing()
 
-add_executable(test_lexer tests/test_lexer.c)
-target_link_libraries(test_lexer PRIVATE lexer)
+add_executable(test_lexer tests/test_lexer.c
+        ${FLEX_Scanner_OUTPUTS}
+)
 target_include_directories(test_lexer PRIVATE include)
 
 add_test(NAME lexer COMMAND test_lexer)
+
