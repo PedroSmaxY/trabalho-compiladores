@@ -55,5 +55,6 @@ Node* createAtribuicaoNode(Node* id, Node* expr);
 Node* createOpNode(NodeType type, Node* left, Node* right);
 
 void printAst(const Node* node, int level);
+void printSemanticAst(Node* node, int level);
 
 #endif // AST_H
