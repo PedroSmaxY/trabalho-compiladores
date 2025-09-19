@@ -16,7 +16,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COPYONLY)
 
 
-add_executable(main src/main.c src/ast.c
+add_executable(main src/main.c src/ast.c src/utils.c
         ${FLEX_Scanner_OUTPUTS}
         ${BISON_Parser_OUTPUTS}
+        src/utils.c
 )
