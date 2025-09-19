@@ -23,12 +23,12 @@ int main(const int argc, char **argv) {
 
     FILE *fp = fopen(argc > 1 ? argv[1] : "codigo.txt", "r");
     if (!fp) {
-        printf("./main <codigo.txt path>\n");
+        printf("./main <caminho do codigo>\n");
         perror(argv[1]);
         return 1;
     }
 
-    // Get file size
+    // Pergar tamanho do arquivo
     fseek(fp, 0, SEEK_END);
     const long file_size = ftell(fp);
     rewind(fp);
@@ -43,22 +43,21 @@ int main(const int argc, char **argv) {
     buffer[file_size] = '\0';
     fclose(fp);
 
-    // Lexical Analysis
+    // Analize léxica
     if (SHOW_LEXICAL_LOGS) {
         const YY_BUFFER_STATE lex_buffer = yy_scan_string(buffer);
         yy_switch_to_buffer(lex_buffer);
 
         int token;
         while ((token = yylex())) {
-            printf("Linha %4d  Tipo %-12s Lexema: %s\n", yylineno, get_token_category(token), yytext);
+            printf("Linha %4d  Tipo %-16s Lexema: %s\n", yylineno, get_token_category(token), yytext);
         }
-        printf("Linha %4d  Tipo EOF          Lexema: EOF\n", yylineno);
-        yy_delete_buffer(lex_buffer); // Clean up the buffer
+        printf("Linha %4d  Tipo EOF              Lexema: EOF\n", yylineno);
+        yy_delete_buffer(lex_buffer);
     }
 
-    // Parser Analysis
     if (SHOW_PARSER_LOGS) {
-        // Reset lexer for parser
+        // Resetando o lexer para o parser
         YY_BUFFER_STATE parse_buffer = yy_scan_string(buffer);
         yy_switch_to_buffer(parse_buffer);
 
