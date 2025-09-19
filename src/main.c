@@ -11,6 +11,7 @@ extern Node *ast_root;
 int main(const int argc, char **argv) {
     yyin = fopen(argc > 1 ? argv[1] : "codigo.txt", "r");
     if (!yyin) {
+        printf("./main <codigo.txt path>\n");
         perror(argv[1]);
         return 1;
     }
