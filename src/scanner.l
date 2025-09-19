@@ -19,8 +19,8 @@ NUM_REAL    {DIGITO}+\.{DIGITO}+
 
 %%
 [ \t\r]+                   { /* Ignora espaços em branco */ }
-\n                         { /* O Flex já incrementa yylineno automaticamente */ }
-"/*"([^*]|\*+[^*/])*\*+"/" { /* Ignora comentários multi-linha C-style */ }
+\n
+"/*"([^*]|\*+[^*/])*\*+"/" { /* Ignora comentários */ }
 
 "inteiro"                  { return T_INTEIRO; }
 "real"                     { return T_REAL; }

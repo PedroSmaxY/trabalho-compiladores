@@ -13,8 +13,6 @@ include_directories(include)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_compile_definitions(YYDEBUG=1)
-
 configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COPYONLY)
 
 
@@ -31,4 +29,3 @@ add_executable(test_lexer tests/test_lexer.c
 target_include_directories(test_lexer PRIVATE include)
 
 add_test(NAME lexer COMMAND test_lexer)
-
