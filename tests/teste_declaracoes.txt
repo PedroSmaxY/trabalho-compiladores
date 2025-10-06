@@ -1,0 +1,8 @@
+{
+    /* Erro de sintaxe: na gramatica da linguagem um bloco obrigatoriamente precisa ter uma lista de comandos (comando_lista) */
+    /* apos o bloco de declaracoes */
+    /* Teste de declaracoes */
+    inteiro a, b, c;
+    real x, y, z;
+    inteiro contador;
+}

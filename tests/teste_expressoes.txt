@@ -1,0 +1,20 @@
+{
+    inteiro a, b, c;
+    real resultado;
+
+    a = 10;
+    b = 5;
+    c = 2;
+
+    /* Teste de precedencia de operadores */
+    resultado = a + b * c; /* resultado deve ser 20 */
+    mostrar(resultado);
+
+    resultado = (a + b) * c; /* resultado deve ser 30 */
+    mostrar(resultado);
+
+    /* Teste de expressoes logicas */
+    se ( (a > b) && (c > 0) ) entao {
+        mostrar(a);
+    }
+}
