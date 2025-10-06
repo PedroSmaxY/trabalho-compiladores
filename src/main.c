@@ -20,7 +20,7 @@ extern Node *ast_root;
 int main(const int argc, char **argv) {
     char *buffer = NULL;
 
-    FILE *fp = fopen(argc > 1 ? argv[1] : "../tests/teste_declaracoes.txt", "r");
+    FILE *fp = fopen(argc > 1 ? argv[1] : "../codigo.txt", "r");
     if (!fp) {
         printf("./main <caminho do codigo>\n");
         perror(argv[1]);
