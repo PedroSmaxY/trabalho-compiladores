@@ -1,28 +1,11 @@
-//
-// Created by Pedro Novais on 18/09/25.
-//
+#ifndef UTILS_H
+#define UTILS_H
 
-#ifndef TRABALHO_COMPILADORES_H
-#define TRABALHO_COMPILADORES_H
+#include "ast.h"
 
-typedef enum {
-    TOKEN_IDENTIFIER,
-    TOKEN_INTEGER,
-    TOKEN_FLOAT,
-    TOKEN_OPERATOR,
-    TOKEN_KEYWORD,
-    TOKEN_SEPARATOR,
-    TOKEN_EOF,
-    TOKEN_UNKNOWN
-} ETokenType;
+const char* get_token_category(int token);
 
-typedef struct {
-    ETokenType type;
-    char lexeme[64];
-    int line;
-} Token;
+void printAst(const Node* node, int level);
+void printSemanticAst(const Node* node, int level);
 
-const char *tokenTypeToString(ETokenType t);
-void print_usage(const char *prog);
-
-#endif //TRABALHO_COMPILADORES_H
+#endif //UTILS_H

@@ -3,37 +3,40 @@ project(trabalho C)
 
 set(CMAKE_C_STANDARD 11)
 
-# Copia arquivo de entrada para o build
-configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COPYONLY)
+find_package(FLEX REQUIRED)
+find_package(BISON REQUIRED)
 
-# Diretório de headers
-include_directories(include)
+include_directories(include ${CMAKE_CURRENT_BINARY_DIR})
 
-# Biblioteca de utilitários
-add_library(utils STATIC src/utils.c)
-target_include_directories(utils PUBLIC include)
+# Define paths for generated files
+set(BISON_OUTPUT_C ${CMAKE_CURRENT_BINARY_DIR}/parser.c)
+set(BISON_OUTPUT_H ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
+set(FLEX_OUTPUT_C ${CMAKE_CURRENT_BINARY_DIR}/scanner.c)
 
-# Biblioteca do lexer
-add_library(lexer STATIC src/lexer.c)
-target_include_directories(lexer PUBLIC include)
-target_link_libraries(lexer PRIVATE utils)
+# Custom command for Bison
+add_custom_command(
+    OUTPUT ${BISON_OUTPUT_C} ${BISON_OUTPUT_H}
+    COMMAND ${BISON_EXECUTABLE} -d -o ${BISON_OUTPUT_C} ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.y
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.y
+    COMMENT "Running Bison on parser.y"
+)
 
-# Biblioteca do parser
-add_library(parser STATIC src/parser.c)
-target_include_directories(parser PUBLIC include)
-target_link_libraries(parser PRIVATE lexer)
-target_link_libraries(parser PRIVATE utils)
+# Custom command for Flex
+add_custom_command(
+    OUTPUT ${FLEX_OUTPUT_C}
+    COMMAND ${FLEX_EXECUTABLE} -o ${FLEX_OUTPUT_C} ${CMAKE_CURRENT_SOURCE_DIR}/src/scanner.l
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/scanner.l
+    COMMENT "Running Flex on scanner.l"
+)
 
-# Executável principal
-add_executable(main src/main.c)
-target_link_libraries(main PRIVATE parser)
-target_link_libraries(main PRIVATE utils)
-target_link_libraries(main PRIVATE lexer)
+# Custom target to drive the generation
+add_custom_target(GenerateParserScanner DEPENDS ${BISON_OUTPUT_C} ${BISON_OUTPUT_H} ${FLEX_OUTPUT_C})
 
-enable_testing()
+# Main executable
+add_executable(main src/main.c src/ast.c src/utils.c
+    ${BISON_OUTPUT_C}
+    ${FLEX_OUTPUT_C}
+)
 
-add_executable(test_lexer tests/test_lexer.c)
-target_link_libraries(test_lexer PRIVATE lexer)
-target_include_directories(test_lexer PRIVATE include)
-
-add_test(NAME lexer COMMAND test_lexer)
+# Add dependency to ensure generated files are created before main is built
+add_dependencies(main GenerateParserScanner)
