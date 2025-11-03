@@ -32,7 +32,7 @@ Node *ast_root = NULL;
 // Associa os não-terminais ao tipo 'node' da união
 %type <node> declaracao_lista declaracao tipo id_lista
 %type <node> comando_lista comando
-%type <node> comando_se comando_enquanto comando_repita
+%type <node> comando_enquanto comando_repita
 %type <node> comando_ler comando_mostrar comando_atribuicao
 %type <node> expressao
 %type <node> bloco
@@ -43,53 +43,54 @@ Node *ast_root = NULL;
 %nonassoc T_LE T_GE T_EQ T_NE '<' '>'
 %left '+' '-'
 %left '*' '/'
-%precedence T_ENTAO
-%precedence T_SENAO
+%nonassoc T_ENTAO
+%nonassoc T_SENAO
 
 %%
 
 // --- Regras da Gramática ---
 
 programa:
-    /* vazio */              { ast_root = NULL; }
-    | declaracao_lista         { ast_root = createNode(NODE_PROGRAMA, $1, NULL); }
-    | comando_lista            { ast_root = createNode(NODE_PROGRAMA, NULL, $1); }
+    /* vazio */                      { ast_root = NULL; }
+    | declaracao_lista             { ast_root = createNode(NODE_PROGRAMA, $1, NULL); }
+    | comando_lista                { ast_root = createNode(NODE_PROGRAMA, NULL, $1); }
     | declaracao_lista comando_lista { ast_root = createNode(NODE_PROGRAMA, $1, $2); }
     ;
 
 declaracao_lista:
-    declaracao               { $$ = $1; }
-    | declaracao_lista declaracao { $$ = createNode(NODE_DECL_LISTA, $1, $2); }
+    declaracao                   { $$ = createNode(NODE_DECL_LISTA, NULL, $1); }
+    | declaracao_lista declaracao  { $$ = createNode(NODE_DECL_LISTA, $1, $2); }
     ;
 
 declaracao:
-    tipo id_lista ';'        { $$ = createNode(NODE_DECLARACAO, $1, $2); }
+    tipo id_lista ';'            { $$ = createNode(NODE_DECLARACAO, $1, $2); }
     ;
 
 tipo:
-    T_INTEIRO                { $$ = createNode(NODE_TIPO_INTEIRO, NULL, NULL); }
-    | T_REAL                 { $$ = createNode(NODE_TIPO_REAL, NULL, NULL); }
+    T_INTEIRO                    { $$ = createNode(NODE_TIPO_INTEIRO, NULL, NULL); }
+    | T_REAL                     { $$ = createNode(NODE_TIPO_REAL, NULL, NULL); }
     ;
 
 id_lista:
-    T_ID                     { $$ = createIdNode($1); }
-    | id_lista ',' T_ID      { $$ = createNode(NODE_ID_LISTA, $1, createIdNode($3)); }
+    T_ID                         { $$ = createIdNode($1); }
+    | id_lista ',' T_ID          { $$ = createNode(NODE_ID_LISTA, $1, createIdNode($3)); }
     ;
 
 comando_lista:
-    comando                  { $$ = $1; }
-    | comando_lista comando  { $$ = createNode(NODE_CMD_LISTA, $1, $2); }
+    comando                      { $$ = createNode(NODE_CMD_LISTA, NULL, $1); }
+    | comando_lista comando      { $$ = createNode(NODE_CMD_LISTA, $1, $2); }
     ;
 
 comando:
-    comando_se               { $$ = $1; }
-    | comando_enquanto       { $$ = $1; }
-    | comando_repita         { $$ = $1; }
-    | comando_ler            { $$ = $1; }
-    | comando_mostrar        { $$ = $1; }
-    | comando_atribuicao     { $$ = $1; }
-    | bloco                  { $$ = $1; }
-    | error ';'              { yyerrok; $$ = NULL; /* Recuperação de erro simples */ }
+    T_SE expressao T_ENTAO comando %prec T_ENTAO { $$ = createNode(NODE_SE, $2, $4); }
+    | T_SE expressao T_ENTAO comando T_SENAO comando { $$ = createIfElseNode($2, $4, $6); }
+    | comando_enquanto           { $$ = $1; }
+    | comando_repita             { $$ = $1; }
+    | comando_ler                { $$ = $1; }
+    | comando_mostrar            { $$ = $1; }
+    | comando_atribuicao         { $$ = $1; }
+    | bloco                      { $$ = $1; }
+    | error ';'                  { yyerrok; $$ = NULL; }
     ;
 
 bloco:
@@ -97,11 +98,6 @@ bloco:
     | '{' declaracao_lista '}'                { $$ = createNode(NODE_BLOCO, $2, NULL); }
     | '{' comando_lista '}'                   { $$ = createNode(NODE_BLOCO, NULL, $2); }
     | '{' declaracao_lista comando_lista '}' { $$ = createNode(NODE_BLOCO, $2, $3); }
-    ;
-
-comando_se:
-    T_SE expressao T_ENTAO comando %prec T_ENTAO       { $$ = createNode(NODE_SE, $2, $4); }
-    | T_SE expressao T_ENTAO comando T_SENAO comando    { $$ = createIfElseNode($2, $4, $6); }
     ;
 
 comando_enquanto:

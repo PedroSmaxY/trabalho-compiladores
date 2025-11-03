@@ -19,6 +19,7 @@ NUM_REAL    {DIGITO}+\.{DIGITO}+
 
 %%
 [ \t\r]+                   { /* Ignora espaços em branco */ }
+\/\/.*                     { /* Ignora comentários de linha única */ }
 \n
 "/*"([^*]|\*+[^*/])*\*+"/" { /* Ignora comentários */ }
 
