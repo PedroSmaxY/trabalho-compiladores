@@ -106,15 +106,17 @@ void printSemanticAst(const Node* node, const int level) {
             break;
         case NODE_ENQUANTO:
             printf("While\n");
-            printSemanticAst(node->left, level + 1);
-            printSemanticAst(node->right, level + 1);
+            printSemanticAst(node->left, level + 1); // condition
+            for (int i = 0; i < level; i++) printf("  ");
+            printf("Do\n");
+            printSemanticAst(node->right, level + 1); // body
             break;
         case NODE_REPITA_ATE:
             printf("Repeat\n");
-            printSemanticAst(node->left, level + 1);
+            printSemanticAst(node->right, level + 1); // body
             for (int i = 0; i < level; i++) printf("  ");
             printf("Until\n");
-            printSemanticAst(node->right, level + 1);
+            printSemanticAst(node->left, level + 1); // condition
             break;
         case NODE_LER:
             printf("Read: ");
