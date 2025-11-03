@@ -30,11 +30,11 @@ Node *ast_root = NULL;
 %token T_AND T_OR T_LE T_GE T_EQ T_NE
 
 // Associa os não-terminais ao tipo 'node' da união
-%type <node> programa declaracao_lista declaracao tipo id_lista
-%type <node> corpo comando_lista comando
+%type <node> declaracao_lista declaracao tipo id_lista
+%type <node> comando_lista comando
 %type <node> comando_se comando_enquanto comando_repita
 %type <node> comando_ler comando_mostrar comando_atribuicao
-%type <node> expressao expressao_logica expressao_relacional expressao_arit
+%type <node> expressao
 %type <node> bloco
 
 // Precedência e associatividade dos operadores
@@ -43,17 +43,22 @@ Node *ast_root = NULL;
 %nonassoc T_LE T_GE T_EQ T_NE '<' '>'
 %left '+' '-'
 %left '*' '/'
+%precedence T_ENTAO
+%precedence T_SENAO
 
 %%
 
 // --- Regras da Gramática ---
 
 programa:
-    bloco { ast_root = $1; }
+    /* vazio */              { ast_root = NULL; }
+    | declaracao_lista         { ast_root = createNode(NODE_PROGRAMA, $1, NULL); }
+    | comando_lista            { ast_root = createNode(NODE_PROGRAMA, NULL, $1); }
+    | declaracao_lista comando_lista { ast_root = createNode(NODE_PROGRAMA, $1, $2); }
     ;
 
 declaracao_lista:
-    /* vazio */              { $$ = NULL; }
+    declaracao               { $$ = $1; }
     | declaracao_lista declaracao { $$ = createNode(NODE_DECL_LISTA, $1, $2); }
     ;
 
@@ -71,12 +76,8 @@ id_lista:
     | id_lista ',' T_ID      { $$ = createNode(NODE_ID_LISTA, $1, createIdNode($3)); }
     ;
 
-corpo:
-    comando_lista            { $$ = $1; }
-    ;
-
 comando_lista:
-    comando                  { $$ = createNode(NODE_CMD_LISTA, NULL, $1); }
+    comando                  { $$ = $1; }
     | comando_lista comando  { $$ = createNode(NODE_CMD_LISTA, $1, $2); }
     ;
 
@@ -92,12 +93,14 @@ comando:
     ;
 
 bloco:
-    '{' declaracao_lista comando_lista '}' { $$ = createNode(NODE_BLOCO, $2, $3); }
-    | '{' comando_lista '}'    { $$ = createNode(NODE_BLOCO, NULL, $2); }
+    '{' '}'                                { $$ = createNode(NODE_BLOCO, NULL, NULL); }
+    | '{' declaracao_lista '}'                { $$ = createNode(NODE_BLOCO, $2, NULL); }
+    | '{' comando_lista '}'                   { $$ = createNode(NODE_BLOCO, NULL, $2); }
+    | '{' declaracao_lista comando_lista '}' { $$ = createNode(NODE_BLOCO, $2, $3); }
     ;
 
 comando_se:
-    T_SE expressao T_ENTAO comando                      { $$ = createNode(NODE_SE, $2, $4); }
+    T_SE expressao T_ENTAO comando %prec T_ENTAO       { $$ = createNode(NODE_SE, $2, $4); }
     | T_SE expressao T_ENTAO comando T_SENAO comando    { $$ = createIfElseNode($2, $4, $6); }
     ;
 
@@ -122,34 +125,22 @@ comando_atribuicao:
     ;
 
 expressao:
-    expressao_logica         { $$ = $1; }
-    ;
-
-expressao_logica:
-    expressao_relacional                            { $$ = $1; }
-    | expressao_logica T_AND expressao_relacional   { $$ = createOpNode(NODE_OP_AND, $1, $3); }
-    | expressao_logica T_OR expressao_relacional    { $$ = createOpNode(NODE_OP_OR, $1, $3); }
-    ;
-
-expressao_relacional:
-    expressao_arit                                  { $$ = $1; }
-    | expressao_arit '<' expressao_arit             { $$ = createOpNode(NODE_OP_LT, $1, $3); }
-    | expressao_arit T_LE expressao_arit            { $$ = createOpNode(NODE_OP_LE, $1, $3); }
-    | expressao_arit '>' expressao_arit             { $$ = createOpNode(NODE_OP_GT, $1, $3); }
-    | expressao_arit T_GE expressao_arit            { $$ = createOpNode(NODE_OP_GE, $1, $3); }
-    | expressao_arit T_EQ expressao_arit            { $$ = createOpNode(NODE_OP_EQ, $1, $3); }
-    | expressao_arit T_NE expressao_arit            { $$ = createOpNode(NODE_OP_NE, $1, $3); }
-    ;
-
-expressao_arit:
-    T_ID                                            { $$ = createIdNode($1); }
-    | T_NUMERO_INTEIRO                              { $$ = createIntNode($1); }
-    | T_NUMERO_REAL                                 { $$ = createFloatNode($1); }
-    | '(' expressao ')'                             { $$ = $2; }
-    | expressao_arit '+' expressao_arit             { $$ = createOpNode(NODE_OP_SOMA, $1, $3); }
-    | expressao_arit '-' expressao_arit             { $$ = createOpNode(NODE_OP_SUB, $1, $3); }
-    | expressao_arit '*' expressao_arit             { $$ = createOpNode(NODE_OP_MULT, $1, $3); }
-    | expressao_arit '/' expressao_arit             { $$ = createOpNode(NODE_OP_DIV, $1, $3); }
+    T_ID                                      { $$ = createIdNode($1); }
+    | T_NUMERO_INTEIRO                        { $$ = createIntNode($1); }
+    | T_NUMERO_REAL                           { $$ = createFloatNode($1); }
+    | '(' expressao ')'                       { $$ = $2; }
+    | expressao '+' expressao                 { $$ = createOpNode(NODE_OP_SOMA, $1, $3); }
+    | expressao '-' expressao                 { $$ = createOpNode(NODE_OP_SUB, $1, $3); }
+    | expressao '*' expressao                 { $$ = createOpNode(NODE_OP_MULT, $1, $3); }
+    | expressao '/' expressao                 { $$ = createOpNode(NODE_OP_DIV, $1, $3); }
+    | expressao '<' expressao                 { $$ = createOpNode(NODE_OP_LT, $1, $3); }
+    | expressao T_LE expressao                { $$ = createOpNode(NODE_OP_LE, $1, $3); }
+    | expressao '>' expressao                 { $$ = createOpNode(NODE_OP_GT, $1, $3); }
+    | expressao T_GE expressao                { $$ = createOpNode(NODE_OP_GE, $1, $3); }
+    | expressao T_EQ expressao                { $$ = createOpNode(NODE_OP_EQ, $1, $3); }
+    | expressao T_NE expressao                { $$ = createOpNode(NODE_OP_NE, $1, $3); }
+    | expressao T_AND expressao               { $$ = createOpNode(NODE_OP_AND, $1, $3); }
+    | expressao T_OR expressao                { $$ = createOpNode(NODE_OP_OR, $1, $3); }
     ;
 
 %%
