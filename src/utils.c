@@ -1,18 +1,16 @@
-#include <stdio.h>
-
 #include "utils.h"
-
-#include "ast.h"
 #include "parser.h"
 
+extern const char* node_type_names[];
+
 const char* node_type_names[] = {
-    "NODE_PROGRAMA" ,   "NODE_BLOCO"     , "NODE_DECL_LISTA", "NODE_DECLARACAO" , "NODE_TIPO_INTEIRO",
-    "NODE_TIPO_REAL",   "NODE_ID_LISTA"  , "NODE_CMD_LISTA" , "NODE_SE"         ,
-    "NODE_SE_SENAO" ,   "NODE_ENQUANTO"  , "NODE_REPITA_ATE", "NODE_LER"        ,
-    "NODE_MOSTRAR"  ,   "NODE_ATRIBUICAO", "NODE_ID"        , "NODE_NUM_INTEIRO",
-    "NODE_NUM_REAL" ,   "NODE_OP_SOMA"   , "NODE_OP_SUB"    , "NODE_OP_MULT"    ,
-    "NODE_OP_DIV"   ,   "NODE_OP_AND"    , "NODE_OP_OR"     , "NODE_OP_LT"      , "NODE_OP_LE"       ,
-    "NODE_OP_GT"    ,   "NODE_OP_GE"     , "NODE_OP_EQ"     , "NODE_OP_NE"
+    "NODE_PROGRAMA", "NODE_BLOCO", "NODE_DECL_LISTA", "NODE_DECLARACAO", "NODE_TIPO_INTEIRO",
+    "NODE_TIPO_REAL", "NODE_ID_LISTA", "NODE_CMD_LISTA", "NODE_SE", "NODE_SE_SENAO",
+    "NODE_ENQUANTO", "NODE_REPITA_ATE", "NODE_LER", "NODE_MOSTRAR", "NODE_ATRIBUICAO",
+    "NODE_ID", "NODE_NUM_INTEIRO", "NODE_NUM_REAL", "NODE_OP_SOMA", "NODE_OP_SUB",
+    "NODE_OP_MULT", "NODE_OP_DIV", "NODE_OP_AND", "NODE_OP_OR", "NODE_OP_LT",
+    "NODE_OP_LE", "NODE_OP_GT", "NODE_OP_GE", "NODE_OP_EQ", "NODE_OP_NE",
+    "NODE_TYPE_CONVERSION"
 };
 
 const char* get_token_category(const int token) {
@@ -54,113 +52,82 @@ const char* get_token_category(const int token) {
 }
 
 void printAst(const Node* node, const int level) {
-    if (node == NULL) {
-        return;
-    }
-
-    for (int i = 0; i < level; i++) {
-        printf("  ");
-    }
-
-    printf("Node Type: %s", node_type_names[node->type]);
-
-    if (node->type == NODE_ID || node->type == NODE_NUM_INTEIRO || node->type == NODE_NUM_REAL) {
-        printf(", Value: ");
-        if (node->type == NODE_ID) printf("%s", node->value.sval);
-        else if (node->type == NODE_NUM_INTEIRO) printf("%d", node->value.ival);
-        else if (node->type == NODE_NUM_REAL) printf("%f", node->value.fval);
-    }
-    printf("\n");
-
-    printAst(node->left, level + 1);
-    printAst(node->right, level + 1);
+    printAstToFile(stdout, node, level);
 }
 
 void printSemanticAst(const Node* node, const int level) {
+    printSemanticAstToFile(stdout, node, level);
+}
+
+void printAstToFile(FILE* fp, const Node* node, const int level) {
     if (node == NULL) return;
-    for (int i = 0; i < level; i++) printf("  ");
+    for (int i = 0; i < level; i++) fprintf(fp, "  ");
+
+    fprintf(fp, "Type: %s", node_type_names[node->type]);
+
+    if (node->type == NODE_ID) fprintf(fp, ", Value: %s", node->value.sval);
+    else if (node->type == NODE_NUM_INTEIRO) fprintf(fp, ", Value: %d", node->value.ival);
+    else if (node->type == NODE_NUM_REAL) fprintf(fp, ", Value: %f", node->value.fval);
+
+    fprintf(fp, "\n");
+
+    printAstToFile(fp, node->left, level + 1);
+    printAstToFile(fp, node->right, level + 1);
+}
+
+void printSemanticAstToFile(FILE* fp, const Node* node, const int level) {
+    if (node == NULL) return;
+    for (int i = 0; i < level; i++) fprintf(fp, "  ");
+
+    const char* type_str = datatype_to_string(node->data_type);
 
     switch(node->type) {
-        case NODE_PROGRAMA:
-        case NODE_BLOCO:
-        case NODE_DECL_LISTA:
-        case NODE_CMD_LISTA:
-            printSemanticAst(node->left, level);
-            printSemanticAst(node->right, level);
-            break;
-        case NODE_ATRIBUICAO:
-            printf("Assign to: %s\n", node->left->value.sval);
-            printSemanticAst(node->right, level + 1);
-            break;
-        case NODE_SE:
-            printf("If\n");
-            printSemanticAst(node->left, level + 1);
-            if (node->right && node->right->type == NODE_SE_SENAO) {
-                printSemanticAst(node->right->left, level + 1);
-                for (int i = 0; i < level; i++) printf("  ");
-                printf("Else\n");
-                printSemanticAst(node->right->right, level + 1);
-            } else {
-                printSemanticAst(node->right, level + 1);
-            }
-            break;
-        case NODE_ENQUANTO:
-            printf("While\n");
-            printSemanticAst(node->left, level + 1); // condition
-            for (int i = 0; i < level; i++) printf("  ");
-            printf("Do\n");
-            printSemanticAst(node->right, level + 1); // body
-            break;
-        case NODE_REPITA_ATE:
-            printf("Repeat\n");
-            printSemanticAst(node->right, level + 1); // body
-            for (int i = 0; i < level; i++) printf("  ");
-            printf("Until\n");
-            printSemanticAst(node->left, level + 1); // condition
-            break;
-        case NODE_LER:
-            printf("Read: ");
-            const Node* current = node->left;
-            while(current) {
-                if (current->type == NODE_ID_LISTA) {
-                    const Node* id_node = current->right;
-                    if(id_node) printf("%s", id_node->value.sval);
-                    current = current->left;
-                    if(current) printf(", ");
-                } else if (current->type == NODE_ID) {
-                    printf("%s", current->value.sval);
-                    current = NULL;
-                }
-            }
-            printf("\n");
-            break;
-        case NODE_MOSTRAR:
-            printf("Write\n");
-            printSemanticAst(node->left, level + 1);
-            break;
         case NODE_ID:
-            printf("Id: %s\n", node->value.sval);
+            fprintf(fp, "Id: %s [Tipo: %s]\n", node->value.sval, type_str);
             break;
         case NODE_NUM_INTEIRO:
-            printf("Const: %d\n", node->value.ival);
+            fprintf(fp, "Const: %d [Tipo: %s]\n", node->value.ival, type_str);
             break;
         case NODE_NUM_REAL:
-            printf("Const: %f\n", node->value.fval);
+            fprintf(fp, "Const: %f [Tipo: %s]\n", node->value.fval, type_str);
             break;
-        case NODE_OP_SOMA: printf("Op: +\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_SUB:  printf("Op: -\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_MULT: printf("Op: *\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_DIV:  printf("Op: /\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_LT:   printf("Op: <\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_GT:   printf("Op: >\n");  printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_LE:   printf("Op: <=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_GE:   printf("Op: >=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_EQ:   printf("Op: ==\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_NE:   printf("Op: !=\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_AND:  printf("Op: &&\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
-        case NODE_OP_OR:   printf("Op: ||\n"); printSemanticAst(node->left, level+1); printSemanticAst(node->right, level+1); break;
+        case NODE_ATRIBUICAO:
+            fprintf(fp, "Atribuição [Tipo: %s]\n", type_str);
+            break;
+        case NODE_OP_SOMA: fprintf(fp, "Op: + [Tipo: %s]\n", type_str); break;
+        case NODE_OP_SUB:  fprintf(fp, "Op: - [Tipo: %s]\n", type_str); break;
+        case NODE_OP_MULT: fprintf(fp, "Op: * [Tipo: %s]\n", type_str); break;
+        case NODE_OP_DIV:  fprintf(fp, "Op: / [Tipo: %s]\n", type_str); break;
+        case NODE_OP_LT:   fprintf(fp, "Op: < [Tipo: %s]\n", type_str); break;
+        case NODE_OP_GT:   fprintf(fp, "Op: > [Tipo: %s]\n", type_str); break;
+        case NODE_OP_LE:   fprintf(fp, "Op: <= [Tipo: %s]\n", type_str); break;
+        case NODE_OP_GE:   fprintf(fp, "Op: >= [Tipo: %s]\n", type_str); break;
+        case NODE_OP_EQ:   fprintf(fp, "Op: == [Tipo: %s]\n", type_str); break;
+        case NODE_OP_NE:   fprintf(fp, "Op: != [Tipo: %s]\n", type_str); break;
+        case NODE_OP_AND:  fprintf(fp, "Op: E [Tipo: %s]\n", type_str); break;
+        case NODE_OP_OR:   fprintf(fp, "Op: OU [Tipo: %s]\n", type_str); break;
+        case NODE_SE:      fprintf(fp, "Se\n"); break;
+        case NODE_ENQUANTO:fprintf(fp, "Enquanto\n"); break;
+        case NODE_MOSTRAR: fprintf(fp, "Mostrar\n"); break;
+        case NODE_LER:     fprintf(fp, "Ler\n"); break;
+        case NODE_TYPE_CONVERSION:
+            fprintf(fp, "Conversão para %s\n", type_str);
+            break;
         default:
-            printSemanticAst(node->left, level);
-            printSemanticAst(node->right, level);
+            break;
     }
+
+    if (node->left) printSemanticAstToFile(fp, node->left, level + 1);
+    if (node->right) printSemanticAstToFile(fp, node->right, level + 1);
+}
+
+void printSymbolTableToFile(FILE* fp, SymbolTable* table) {
+    if (!table) return;
+    fprintf(fp, "--- Tabela de Símbolos (Escopo: %s) ---\n", table->scope_name);
+    fprintf(fp, "%-20s | %-10s | %-15s | %-5s\n", "Nome", "Tipo", "Endereço (bytes)", "Linha");
+    fprintf(fp, "----------------------------------------------------------\n");
+    for (Symbol* s = table->symbols; s != NULL; s = s->next) {
+        fprintf(fp, "%-20s | %-10s | %-15d | %-5d\n", s->name, datatype_to_string(s->type), s->memory_address, s->line);
+    }
+    fprintf(fp, "----------------------------------------------------------\n\n");
 }

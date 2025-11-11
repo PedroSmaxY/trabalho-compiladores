@@ -29,14 +29,8 @@ add_custom_command(
     COMMENT "Running Flex on scanner.l"
 )
 
-# Custom target to drive the generation
-add_custom_target(GenerateParserScanner DEPENDS ${BISON_OUTPUT_C} ${BISON_OUTPUT_H} ${FLEX_OUTPUT_C})
-
 # Main executable
-add_executable(main src/main.c src/ast.c src/utils.c
+add_executable(main src/main.c src/ast.c src/utils.c src/semantic.c
     ${BISON_OUTPUT_C}
     ${FLEX_OUTPUT_C}
 )
-
-# Add dependency to ensure generated files are created before main is built
-add_dependencies(main GenerateParserScanner)

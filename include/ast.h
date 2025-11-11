@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include "semantic.h" // Inclui as definições de DataType e Symbol
+
 // Enumeração para todos os tipos de nós possíveis na AST
 typedef enum {
     NODE_PROGRAMA,
@@ -32,9 +34,11 @@ typedef enum {
     NODE_OP_GT, // Greater Than
     NODE_OP_GE, // Greater or Equal
     NODE_OP_EQ, // Equal
-    NODE_OP_NE  // Not Equal
+    NODE_OP_NE,  // Not Equal
+    NODE_TYPE_CONVERSION // Novo tipo de nó para conversão de tipo
 } NodeType;
 
+// Estrutura do nó da AST
 typedef struct Node {
     NodeType type;
     struct Node *left;
@@ -44,14 +48,23 @@ typedef struct Node {
         float fval;
         char *sval;
     } value;
+    int line; // Linha do código fonte
+    DataType data_type; // Tipo de dado do nó (após análise semântica)
+    struct Symbol *symbol_entry; // Ponteiro para a entrada na tabela de símbolos
 } Node;
 
-Node* createNode(NodeType type, Node* left, Node* right);
-Node* createIntNode(int value);
-Node* createFloatNode(float value);
-Node* createIdNode(const char* sval);
-Node* createIfElseNode(Node* condition, Node* if_branch, Node* else_branch);
-Node* createAtribuicaoNode(Node* id, Node* expr);
-Node* createOpNode(NodeType type, Node* left, Node* right);
+// --- Protótipos de Funções ---
+
+// Funções de criação de nós da AST
+Node* createNode(NodeType type, Node* left, Node* right, int line);
+Node* createIntNode(int value, int line);
+Node* createFloatNode(float value, int line);
+Node* createIdNode(const char* sval, int line);
+Node* createIfElseNode(Node* condition, Node* if_branch, Node* else_branch, int line);
+Node* createAtribuicaoNode(Node* id, Node* expr, int line);
+Node* createOpNode(NodeType type, Node* left, Node* right, int line);
+
+// Função principal da análise semântica
+void semantic_check(Node *ast_root);
 
 #endif // AST_H

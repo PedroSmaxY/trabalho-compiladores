@@ -1,82 +1,61 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
-#include "parser.h"
 #include "utils.h"
+#include "parser.h"
 
-typedef struct yy_buffer_state *YY_BUFFER_STATE;
-extern int yylex(void);
-extern int yylineno;
-extern char* yytext;
-extern YY_BUFFER_STATE yy_scan_string(const char *str);
-extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
-extern void yy_switch_to_buffer(YY_BUFFER_STATE new_buffer);
-
+extern int yyparse(void);
+extern FILE *yyin;
 extern Node *ast_root;
+extern SymbolTable *global_symbol_table;
 
-#define SHOW_LEXICAL_LOGS 0
-#define SHOW_PARSER_LOGS 1
-
-int main(const int argc, char **argv) {
-    char *buffer = NULL;
-
-    FILE *fp = fopen(argc > 1 ? argv[1] : "../codigo.txt", "r");
-    if (!fp) {
-        printf("./main <caminho do codigo>\n");
-        perror(argv[1]);
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Uso: %s <arquivo_de_entrada>\n", argv[0]);
         return 1;
     }
 
-    // Pegar tamanho do arquivo
-    fseek(fp, 0, SEEK_END);
-    const long file_size = ftell(fp);
-    rewind(fp);
-
-    buffer = (char *) malloc(file_size + 1);
-    if (!buffer) {
-        perror("Failed to allocate buffer");
-        fclose(fp);
+    yyin = fopen(argv[1], "r");
+    if (!yyin) {
+        perror("Erro ao abrir o arquivo de entrada");
         return 1;
     }
-    fread(buffer, 1, file_size, fp);
-    buffer[file_size] = '\0';
-    fclose(fp);
 
-    // Análize léxica
-    if (SHOW_LEXICAL_LOGS) {
-        YY_BUFFER_STATE lex_buffer = yy_scan_string(buffer);
-        yy_switch_to_buffer(lex_buffer);
+    if (yyparse() != 0) {
+        fprintf(stderr, "Análise sintática falhou.\n");
+        return 1;
+    }
+    printf("Análise sintática concluída com sucesso.\n");
 
-        printf("\n--- Saida Lexica ---\n");
-
-        int token;
-        while ((token = yylex())) {
-            printf("Linha %4d  Tipo %-16s Lexema: %s\n", yylineno, get_token_category(token), yytext);
-        }
-        printf("Linha %4d  Tipo EOF              Lexema: EOF\n", yylineno);
-        yy_delete_buffer(lex_buffer);
+    FILE *output_file = fopen("analise_semantica.txt", "w");
+    if (!output_file) {
+        perror("Não foi possível criar o arquivo de saída da análise semântica");
+        return 1;
     }
 
-    if (SHOW_PARSER_LOGS) {
-        // Resetando o lexer para o parser
-        YY_BUFFER_STATE parse_buffer = yy_scan_string(buffer);
-        yy_switch_to_buffer(parse_buffer);
+    if (ast_root) {
+        fprintf(output_file, "--- Árvore Sintática Abstrata (Antes da Análise Semântica) ---\n");
+        printAstToFile(output_file, ast_root, 0);
 
-        if (yyparse() != 0) {
-            fprintf(stderr, "Erro de sintaxe\n");
-        }
+        printf("Executando análise semântica...\n");
+        semantic_check(ast_root);
+        printf("Análise semântica concluída.\n");
 
-        printf("Analise sintatica concluida.\n");
+        fprintf(output_file, "\n\n--- Árvore Sintática Abstrata (Após Análise Semântica) ---\n");
+        printSemanticAstToFile(output_file, ast_root, 0);
 
-        if (ast_root != NULL) {
-            printf("\n--- Saida Semantica ---\n");
-            printSemanticAst(ast_root, 0);
-        } else {
-            printf("Nao foi possivel gerar a arvore sintatica devido a erros.\n");
-        }
-        yy_delete_buffer(parse_buffer);
+        fprintf(output_file, "\n\n--- Tabela de Símbolos ---\n");
+        printSymbolTableToFile(output_file, global_symbol_table);
+    } else {
+        fprintf(output_file, "Nenhuma árvore sintática foi gerada.\n");
     }
 
-    free(buffer);
+    printf("Resultados da análise semântica foram escritos em 'analise_semantica.txt'.\n");
+
+    fclose(output_file);
+    if (yyin) fclose(yyin);
+    free_symbol_table(global_symbol_table);
+    // TODO: free_ast(ast_root);
+
     return 0;
 }

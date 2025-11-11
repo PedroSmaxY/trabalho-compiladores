@@ -1,0 +1,82 @@
+--- Árvore Sintática Abstrata (Antes da Análise Semântica) ---
+Type: NODE_PROGRAMA
+  Type: NODE_DECL_LISTA
+    Type: NODE_DECL_LISTA
+      Type: NODE_DECLARACAO
+        Type: NODE_TIPO_INTEIRO
+        Type: NODE_ID_LISTA
+          Type: NODE_ID_LISTA
+            Type: NODE_ID, Value: a
+            Type: NODE_ID, Value: b
+          Type: NODE_ID, Value: c
+    Type: NODE_DECLARACAO
+      Type: NODE_TIPO_REAL
+      Type: NODE_ID, Value: x
+  Type: NODE_CMD_LISTA
+    Type: NODE_CMD_LISTA
+      Type: NODE_CMD_LISTA
+        Type: NODE_CMD_LISTA
+          Type: NODE_CMD_LISTA
+            Type: NODE_CMD_LISTA
+              Type: NODE_CMD_LISTA
+                Type: NODE_CMD_LISTA
+                  Type: NODE_CMD_LISTA
+                    Type: NODE_ATRIBUICAO
+                      Type: NODE_ID, Value: a
+                      Type: NODE_OP_OR
+                        Type: NODE_NUM_INTEIRO, Value: 1
+                        Type: NODE_OP_AND
+                          Type: NODE_NUM_INTEIRO, Value: 2
+                          Type: NODE_NUM_INTEIRO, Value: 0
+                  Type: NODE_ATRIBUICAO
+                    Type: NODE_ID, Value: b
+                    Type: NODE_NUM_INTEIRO, Value: 5
+                Type: NODE_ATRIBUICAO
+                  Type: NODE_ID, Value: c
+                  Type: NODE_NUM_INTEIRO, Value: 0
+              Type: NODE_SE
+                Type: NODE_OP_GT
+                  Type: NODE_ID, Value: b
+                  Type: NODE_NUM_INTEIRO, Value: 0
+                Type: NODE_SE
+                  Type: NODE_OP_GT
+                    Type: NODE_ID, Value: b
+                    Type: NODE_NUM_INTEIRO, Value: 2
+                  Type: NODE_SE_SENAO
+                    Type: NODE_ATRIBUICAO
+                      Type: NODE_ID, Value: c
+                      Type: NODE_NUM_INTEIRO, Value: 10
+                    Type: NODE_ATRIBUICAO
+                      Type: NODE_ID, Value: c
+                      Type: NODE_NUM_INTEIRO, Value: 20
+            Type: NODE_ATRIBUICAO
+              Type: NODE_ID, Value: x
+              Type: NODE_NUM_REAL, Value: 10.500000
+          Type: NODE_ENQUANTO
+            Type: NODE_OP_GT
+              Type: NODE_ID, Value: b
+              Type: NODE_NUM_INTEIRO, Value: 0
+            Type: NODE_BLOCO
+              Type: NODE_CMD_LISTA
+                Type: NODE_ATRIBUICAO
+                  Type: NODE_ID, Value: b
+                  Type: NODE_OP_SUB
+                    Type: NODE_ID, Value: b
+                    Type: NODE_NUM_INTEIRO, Value: 1
+        Type: NODE_REPITA_ATE
+          Type: NODE_OP_GT
+            Type: NODE_ID, Value: a
+            Type: NODE_NUM_INTEIRO, Value: 5
+          Type: NODE_ATRIBUICAO
+            Type: NODE_ID, Value: a
+            Type: NODE_OP_SOMA
+              Type: NODE_ID, Value: a
+              Type: NODE_NUM_INTEIRO, Value: 1
+      Type: NODE_LER
+        Type: NODE_ID_LISTA
+          Type: NODE_ID, Value: a
+          Type: NODE_ID, Value: c
+    Type: NODE_MOSTRAR
+      Type: NODE_OP_DIV
+        Type: NODE_ID, Value: x
+        Type: NODE_NUM_REAL, Value: 2.000000

@@ -1,13 +1,12 @@
 %{
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "ast.h"
+#include "utils.h"
+#include <string.h>
 
-int yylex(void);
 void yyerror(const char *s);
+extern int yylex(void);
 extern int yylineno;
-
 Node *ast_root = NULL;
 %}
 
@@ -52,38 +51,38 @@ Node *ast_root = NULL;
 
 programa:
     /* vazio */                      { ast_root = NULL; }
-    | declaracao_lista             { ast_root = createNode(NODE_PROGRAMA, $1, NULL); }
-    | comando_lista                { ast_root = createNode(NODE_PROGRAMA, NULL, $1); }
-    | declaracao_lista comando_lista { ast_root = createNode(NODE_PROGRAMA, $1, $2); }
+    | declaracao_lista             { ast_root = createNode(NODE_PROGRAMA, $1, NULL, @1.first_line); }
+    | comando_lista                { ast_root = createNode(NODE_PROGRAMA, NULL, $1, @1.first_line); }
+    | declaracao_lista comando_lista { ast_root = createNode(NODE_PROGRAMA, $1, $2, @1.first_line); }
     ;
 
 declaracao_lista:
-    declaracao                   { $$ = createNode(NODE_DECL_LISTA, NULL, $1); }
-    | declaracao_lista declaracao  { $$ = createNode(NODE_DECL_LISTA, $1, $2); }
+    declaracao                   { $$ = createNode(NODE_DECL_LISTA, NULL, $1, @1.first_line); }
+    | declaracao_lista declaracao  { $$ = createNode(NODE_DECL_LISTA, $1, $2, @1.first_line); }
     ;
 
 declaracao:
-    tipo id_lista ';'            { $$ = createNode(NODE_DECLARACAO, $1, $2); }
+    tipo id_lista ';'            { $$ = createNode(NODE_DECLARACAO, $1, $2, @1.first_line); }
     ;
 
 tipo:
-    T_INTEIRO                    { $$ = createNode(NODE_TIPO_INTEIRO, NULL, NULL); }
-    | T_REAL                     { $$ = createNode(NODE_TIPO_REAL, NULL, NULL); }
+    T_INTEIRO                    { $$ = createNode(NODE_TIPO_INTEIRO, NULL, NULL, @1.first_line); }
+    | T_REAL                     { $$ = createNode(NODE_TIPO_REAL, NULL, NULL, @1.first_line); }
     ;
 
 id_lista:
-    T_ID                         { $$ = createIdNode($1); }
-    | id_lista ',' T_ID          { $$ = createNode(NODE_ID_LISTA, $1, createIdNode($3)); }
+    T_ID                         { $$ = createIdNode($1, @1.first_line); }
+    | id_lista ',' T_ID          { $$ = createNode(NODE_ID_LISTA, $1, createIdNode($3, @3.first_line), @1.first_line); }
     ;
 
 comando_lista:
-    comando                      { $$ = createNode(NODE_CMD_LISTA, NULL, $1); }
-    | comando_lista comando      { $$ = createNode(NODE_CMD_LISTA, $1, $2); }
+    comando                      { $$ = createNode(NODE_CMD_LISTA, NULL, $1, @1.first_line); }
+    | comando_lista comando      { $$ = createNode(NODE_CMD_LISTA, $1, $2, @1.first_line); }
     ;
 
 comando:
-    T_SE expressao T_ENTAO comando %prec T_ENTAO { $$ = createNode(NODE_SE, $2, $4); }
-    | T_SE expressao T_ENTAO comando T_SENAO comando { $$ = createIfElseNode($2, $4, $6); }
+    T_SE expressao T_ENTAO comando %prec T_ENTAO { $$ = createNode(NODE_SE, $2, $4, @1.first_line); }
+    | T_SE expressao T_ENTAO comando T_SENAO comando { $$ = createIfElseNode($2, $4, $6, @1.first_line); }
     | comando_enquanto           { $$ = $1; }
     | comando_repita             { $$ = $1; }
     | comando_ler                { $$ = $1; }
@@ -94,49 +93,49 @@ comando:
     ;
 
 bloco:
-    '{' '}'                                { $$ = createNode(NODE_BLOCO, NULL, NULL); }
-    | '{' declaracao_lista '}'                { $$ = createNode(NODE_BLOCO, $2, NULL); }
-    | '{' comando_lista '}'                   { $$ = createNode(NODE_BLOCO, NULL, $2); }
-    | '{' declaracao_lista comando_lista '}' { $$ = createNode(NODE_BLOCO, $2, $3); }
+    '{' '}'                                { $$ = createNode(NODE_BLOCO, NULL, NULL, @1.first_line); }
+    | '{' declaracao_lista '}'                { $$ = createNode(NODE_BLOCO, $2, NULL, @1.first_line); }
+    | '{' comando_lista '}'                   { $$ = createNode(NODE_BLOCO, NULL, $2, @1.first_line); }
+    | '{' declaracao_lista comando_lista '}' { $$ = createNode(NODE_BLOCO, $2, $3, @1.first_line); }
     ;
 
 comando_enquanto:
-    T_ENQUANTO '(' expressao ')' comando { $$ = createNode(NODE_ENQUANTO, $3, $5); }
+    T_ENQUANTO '(' expressao ')' comando { $$ = createNode(NODE_ENQUANTO, $3, $5, @1.first_line); }
     ;
 
 comando_repita:
-    T_REPITA comando T_ATE expressao ';' { $$ = createNode(NODE_REPITA_ATE, $4, $2); }
+    T_REPITA comando T_ATE expressao ';' { $$ = createNode(NODE_REPITA_ATE, $4, $2, @1.first_line); }
     ;
 
 comando_ler:
-    T_LER '(' id_lista ')' ';'   { $$ = createNode(NODE_LER, $3, NULL); }
+    T_LER '(' id_lista ')' ';'   { $$ = createNode(NODE_LER, $3, NULL, @1.first_line); }
     ;
 
 comando_mostrar:
-    T_MOSTRAR '(' expressao ')' ';' { $$ = createNode(NODE_MOSTRAR, $3, NULL); }
+    T_MOSTRAR '(' expressao ')' ';' { $$ = createNode(NODE_MOSTRAR, $3, NULL, @1.first_line); }
     ;
 
 comando_atribuicao:
-    T_ID '=' expressao ';'   { $$ = createAtribuicaoNode(createIdNode($1), $3); }
+    T_ID '=' expressao ';'   { $$ = createAtribuicaoNode(createIdNode($1, @1.first_line), $3, @1.first_line); }
     ;
 
 expressao:
-    T_ID                                      { $$ = createIdNode($1); }
-    | T_NUMERO_INTEIRO                        { $$ = createIntNode($1); }
-    | T_NUMERO_REAL                           { $$ = createFloatNode($1); }
+    T_ID                                      { $$ = createIdNode($1, @1.first_line); }
+    | T_NUMERO_INTEIRO                        { $$ = createIntNode($1, @1.first_line); }
+    | T_NUMERO_REAL                           { $$ = createFloatNode($1, @1.first_line); }
     | '(' expressao ')'                       { $$ = $2; }
-    | expressao '+' expressao                 { $$ = createOpNode(NODE_OP_SOMA, $1, $3); }
-    | expressao '-' expressao                 { $$ = createOpNode(NODE_OP_SUB, $1, $3); }
-    | expressao '*' expressao                 { $$ = createOpNode(NODE_OP_MULT, $1, $3); }
-    | expressao '/' expressao                 { $$ = createOpNode(NODE_OP_DIV, $1, $3); }
-    | expressao '<' expressao                 { $$ = createOpNode(NODE_OP_LT, $1, $3); }
-    | expressao T_LE expressao                { $$ = createOpNode(NODE_OP_LE, $1, $3); }
-    | expressao '>' expressao                 { $$ = createOpNode(NODE_OP_GT, $1, $3); }
-    | expressao T_GE expressao                { $$ = createOpNode(NODE_OP_GE, $1, $3); }
-    | expressao T_EQ expressao                { $$ = createOpNode(NODE_OP_EQ, $1, $3); }
-    | expressao T_NE expressao                { $$ = createOpNode(NODE_OP_NE, $1, $3); }
-    | expressao T_AND expressao               { $$ = createOpNode(NODE_OP_AND, $1, $3); }
-    | expressao T_OR expressao                { $$ = createOpNode(NODE_OP_OR, $1, $3); }
+    | expressao '+' expressao                 { $$ = createOpNode(NODE_OP_SOMA, $1, $3, @1.first_line); }
+    | expressao '-' expressao                 { $$ = createOpNode(NODE_OP_SUB, $1, $3, @1.first_line); }
+    | expressao '*' expressao                 { $$ = createOpNode(NODE_OP_MULT, $1, $3, @1.first_line); }
+    | expressao '/' expressao                 { $$ = createOpNode(NODE_OP_DIV, $1, $3, @1.first_line); }
+    | expressao '<' expressao                 { $$ = createOpNode(NODE_OP_LT, $1, $3, @1.first_line); }
+    | expressao T_LE expressao                { $$ = createOpNode(NODE_OP_LE, $1, $3, @1.first_line); }
+    | expressao '>' expressao                 { $$ = createOpNode(NODE_OP_GT, $1, $3, @1.first_line); }
+    | expressao T_GE expressao                { $$ = createOpNode(NODE_OP_GE, $1, $3, @1.first_line); }
+    | expressao T_EQ expressao                { $$ = createOpNode(NODE_OP_EQ, $1, $3, @1.first_line); }
+    | expressao T_NE expressao                { $$ = createOpNode(NODE_OP_NE, $1, $3, @1.first_line); }
+    | expressao T_AND expressao               { $$ = createOpNode(NODE_OP_AND, $1, $3, @1.first_line); }
+    | expressao T_OR expressao                { $$ = createOpNode(NODE_OP_OR, $1, $3, @1.first_line); }
     ;
 
 %%
