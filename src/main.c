@@ -3,9 +3,11 @@
 #include "ast.h"
 #include "parser.h"
 #include "utils.h"
+#include "semantic.h"
 
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 extern int yylex(void);
+extern int yyparse(void);
 extern int yylineno;
 extern char* yytext;
 extern YY_BUFFER_STATE yy_scan_string(const char *str);
@@ -16,11 +18,12 @@ extern Node *ast_root;
 
 #define SHOW_LEXICAL_LOGS 0
 #define SHOW_PARSER_LOGS 1
+#define SHOW_SEMANTIC_ANALYSIS 1
 
 int main(const int argc, char **argv) {
     char *buffer = NULL;
 
-    FILE *fp = fopen(argc > 1 ? argv[1] : "../codigo.txt", "r");
+    FILE *fp = fopen(argc > 1 ? argv[1] : "codigo.txt", "r");
     if (!fp) {
         printf("./main <caminho do codigo>\n");
         perror(argv[1]);
@@ -34,7 +37,7 @@ int main(const int argc, char **argv) {
 
     buffer = (char *) malloc(file_size + 1);
     if (!buffer) {
-        perror("Failed to allocate buffer");
+        perror("Erro ao alocar buffer");
         fclose(fp);
         return 1;
     }
@@ -69,8 +72,24 @@ int main(const int argc, char **argv) {
         printf("Analise sintatica concluida.\n");
 
         if (ast_root != NULL) {
-            printf("\n--- Saida Semantica ---\n");
-            printSemanticAst(ast_root, 0);
+            if (SHOW_SEMANTIC_ANALYSIS) {
+                printf("\n--- Analise Semantica ---\n");
+                ResultadoSemantico resultado_semantico = analiseSemantica(ast_root);
+                
+                if (resultado_semantico.error_count == 0) {
+                    printf("Analise semantica concluida sem erros.\n");
+                    printf("\n--- Saida Semantica (AST) ---\n");
+                    printSemanticAst(ast_root, 0);
+                } else {
+                    printf("Analise semantica concluida com %d erro(s).\n", resultado_semantico.error_count);
+                    if (resultado_semantico.warning_count > 0) {
+                        printf("Avisos: %d\n", resultado_semantico.warning_count);
+                    }
+                }
+            } else {
+                printf("\n--- Saida Semantica (AST) ---\n");
+                printSemanticAst(ast_root, 0);
+            }
         } else {
             printf("Nao foi possivel gerar a arvore sintatica devido a erros.\n");
         }

@@ -16,24 +16,29 @@ Node* createNode(const NodeType type, Node* left, Node* right) {
     newNode->type = type;
     newNode->left = left;
     newNode->right = right;
+    newNode->data_type = TYPE_UNDEFINED;
+    newNode->line = 0;
     return newNode;
 }
 
 Node* createIntNode(const int value) {
     Node* newNode = createNode(NODE_NUM_INTEIRO, NULL, NULL);
     newNode->value.ival = value;
+    newNode->data_type = TYPE_INTEIRO;
     return newNode;
 }
 
 Node* createFloatNode(const float value) {
     Node* newNode = createNode(NODE_NUM_REAL, NULL, NULL);
     newNode->value.fval = value;
+    newNode->data_type = TYPE_REAL;
     return newNode;
 }
 
 Node* createIdNode(const char* sval) {
     Node* newNode = createNode(NODE_ID, NULL, NULL);
     newNode->value.sval = strdup(sval);
+    newNode->data_type = TYPE_UNDEFINED; // Será definido durante análise semântica
     return newNode;
 }
 

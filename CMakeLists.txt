@@ -33,7 +33,7 @@ add_custom_command(
 add_custom_target(GenerateParserScanner DEPENDS ${BISON_OUTPUT_C} ${BISON_OUTPUT_H} ${FLEX_OUTPUT_C})
 
 # Main executable
-add_executable(main src/main.c src/ast.c src/utils.c
+add_executable(main src/main.c src/ast.c src/utils.c src/symbol_table.c src/semantic.c
     ${BISON_OUTPUT_C}
     ${FLEX_OUTPUT_C}
 )

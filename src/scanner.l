@@ -19,8 +19,8 @@ NUM_REAL    {DIGITO}+\.{DIGITO}+
 
 %%
 [ \t\r]+                   { /* Ignora espaços em branco */ }
+\n                         { /* Ignora quebras de linha */ }
 \/\/.*                     { /* Ignora comentários de linha única */ }
-\n
 "/*"([^*]|\*+[^*/])*\*+"/" { /* Ignora comentários */ }
 
 "inteiro"                  { return T_INTEIRO; }
