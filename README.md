@@ -15,7 +15,35 @@ Projeto da matéria de Compiladores (6º semestre). Repositório evolutivo: inic
 - `codigo.txt` exemplo
 - `CMakeLists.txt` build
 
-## Build e Execução (CMake)
+## Build e Execução
+
+### Opção 1: Script Automático (Mais Fácil - Não Requer CMake)
+
+**Linux/macOS:**
+```bash
+./build.sh
+```
+
+**Windows:**
+```cmd
+build.bat
+```
+
+### Opção 2: Compilação Manual (Não Requer CMake)
+
+```bash
+mkdir -p build
+cd build
+bison -d -o parser.c ../src/parser.y
+flex -o scanner.c ../src/scanner.l
+gcc -I ../include -I . -std=c11 \
+  ../src/ast.c ../src/symbol_table.c ../src/semantic.c ../src/utils.c \
+  parser.c scanner.c ../src/main.c -o main -ly
+./main ../codigo.txt
+```
+
+### Opção 3: CMake (Opcional - Requer CMake instalado)
+
 ```bash
 mkdir build
 cd build
@@ -23,14 +51,6 @@ cmake ..          # gera Makefiles
 make              # ou: make -j
 ./main            # executa binário gerado aqui dentro
 ```
-
-## Build e Execução (compilação direta)
-```bash
-gcc -Iinclude src/lexer.c src/main.c -o main
-./main            # usa `codigo.txt` na raiz
-./main caminho/arquivo.p-   # para outro arquivo
-```
-(Use `gcc` ou `clang` conforme disponível.)
 
 ## Testes (apenas Linux & MacOS)
 ```bash

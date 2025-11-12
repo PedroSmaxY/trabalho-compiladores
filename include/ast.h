@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include "symbol_table.h"
+
 // Enumeração para todos os tipos de nós possíveis na AST
 typedef enum {
     NODE_PROGRAMA,
@@ -39,6 +41,8 @@ typedef struct Node {
     NodeType type;
     struct Node *left;
     struct Node *right;
+    DataType data_type;  // Tipo de dados do nó (para análise semântica)
+    int line;            // Linha no código fonte (para mensagens de erro)
     union {
         int ival;
         float fval;
