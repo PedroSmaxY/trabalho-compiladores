@@ -1,0 +1,126 @@
+{
+    /* Teste completo de todas as regras semânticas - CÓDIGO CORRETO */
+    
+    /* Declarações de variáveis */
+    inteiro a, b, c, i, j;
+    real x, y, media, resultado;
+    
+    /* Teste 1: Comando ler - variáveis válidas (inteiras) */
+    ler(a, b);
+    
+    /* Teste 2: Atribuição com expressão válida */
+    c = 10;
+    x = 5.5;
+    y = 3.14;
+    
+    /* Teste 3: Operações aritméticas - inteiro + inteiro = inteiro */
+    c = a + b;
+    i = a - b;
+    j = a * b;
+    c = a / b;
+    
+    /* Teste 4: Operações aritméticas - real + real = real */
+    x = y + 2.5;
+    y = x - 1.0;
+    resultado = x * y;
+    media = x / y;
+    
+    /* Teste 5: Operações aritméticas - inteiro + real = real (promoção) */
+    media = (a + b) / 2.0;  /* Promoção: inteiro vira real */
+    resultado = a + x;      /* Promoção: a (inteiro) vira real */
+    x = c + y;              /* Promoção: c (inteiro) vira real */
+    
+    /* Teste 6: Operações de comparação - retornam booleano (inteiro) */
+    se (a > b) entao {
+        mostrar(a);
+    }
+    
+    se (x >= y) entao {
+        mostrar(x);
+    }
+    
+    se (a < b) entao {
+        mostrar(b);
+    }
+    
+    se (x <= y) entao {
+        mostrar(y);
+    }
+    
+    se (a == b) entao {
+        mostrar(c);
+    }
+    
+    se (x != y) entao {
+        mostrar(media);
+    }
+    
+    /* Teste 7: Operações lógicas - retornam booleano (inteiro) */
+    se ((a > 0) && (b > 0)) entao {
+        mostrar(a + b);
+    }
+    
+    se ((x > 0.0) || (y < 0.0)) entao {
+        mostrar(x + y);
+    }
+    
+    /* Teste 8: Comando se - condição booleana válida */
+    se (a > b) entao {
+        mostrar(a);
+    } senao {
+        mostrar(b);
+    }
+    
+    se ((a + b) > 10) entao {
+        mostrar(a);
+    }
+    
+    /* Teste 9: Comando enquanto - condição booleana válida */
+    i = 0;
+    enquanto (i < 10) {
+        mostrar(i);
+        i = i + 1;
+    }
+    
+    enquanto (a > b) {
+        a = a - 1;
+    }
+    
+    enquanto ((x + y) > 0.0) {
+        x = x - 1.0;
+    }
+    
+    /* Teste 10: Comando repita ... ate - condição booleana válida */
+    j = 10;
+    repita {
+        mostrar(j);
+        j = j - 1;
+    } ate (j == 0);
+    
+    repita {
+        a = a + 1;
+    } ate (a >= 100);
+    
+    /* Teste 11: Comando mostrar - expressão válida (inteira ou real) */
+    mostrar(a);
+    mostrar(x);
+    mostrar(a + b);
+    mostrar(x + y);
+    mostrar(media);
+    mostrar((a + b) / 2);
+    
+    /* Teste 12: Atribuição com promoção implícita (inteiro para real) */
+    x = a;      /* OK: inteiro pode ser atribuído a real */
+    y = b;      /* OK: inteiro pode ser atribuído a real */
+    media = c;  /* OK: inteiro pode ser atribuído a real */
+    
+    /* Teste 13: Expressões complexas */
+    resultado = ((a + b) * 2) / (x + y);
+    media = (a + b + c) / 3.0;
+    
+    /* Teste 14: Condições complexas */
+    se (((a > 0) && (b > 0)) || (media >= 5.0)) entao {
+        mostrar(resultado);
+    }
+}
+

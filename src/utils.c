@@ -164,3 +164,117 @@ void printSemanticAst(const Node* node, const int level) {
             printSemanticAst(node->right, level);
     }
 }
+
+// Versão para arquivo de printAst
+void printAstArquivo(const Node* node, const int level, FILE *file) {
+    if (node == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < level; i++) {
+        fprintf(file, "  ");
+    }
+
+    fprintf(file, "Node Type: %s", node_type_names[node->type]);
+
+    if (node->type == NODE_ID || node->type == NODE_NUM_INTEIRO || node->type == NODE_NUM_REAL) {
+        fprintf(file, ", Value: ");
+        if (node->type == NODE_ID) fprintf(file, "%s", node->value.sval);
+        else if (node->type == NODE_NUM_INTEIRO) fprintf(file, "%d", node->value.ival);
+        else if (node->type == NODE_NUM_REAL) fprintf(file, "%f", node->value.fval);
+    }
+    fprintf(file, "\n");
+
+    printAstArquivo(node->left, level + 1, file);
+    printAstArquivo(node->right, level + 1, file);
+}
+
+// Versão para arquivo de printSemanticAst
+void printSemanticAstArquivo(const Node* node, const int level, FILE *file) {
+    if (node == NULL) return;
+    for (int i = 0; i < level; i++) fprintf(file, "  ");
+
+    switch(node->type) {
+        case NODE_PROGRAMA:
+        case NODE_BLOCO:
+        case NODE_DECL_LISTA:
+        case NODE_CMD_LISTA:
+            printSemanticAstArquivo(node->left, level, file);
+            printSemanticAstArquivo(node->right, level, file);
+            break;
+        case NODE_ATRIBUICAO:
+            fprintf(file, "Assign to: %s\n", node->left->value.sval);
+            printSemanticAstArquivo(node->right, level + 1, file);
+            break;
+        case NODE_SE:
+            fprintf(file, "If\n");
+            printSemanticAstArquivo(node->left, level + 1, file);
+            if (node->right && node->right->type == NODE_SE_SENAO) {
+                printSemanticAstArquivo(node->right->left, level + 1, file);
+                for (int i = 0; i < level; i++) fprintf(file, "  ");
+                fprintf(file, "Else\n");
+                printSemanticAstArquivo(node->right->right, level + 1, file);
+            } else {
+                printSemanticAstArquivo(node->right, level + 1, file);
+            }
+            break;
+        case NODE_ENQUANTO:
+            fprintf(file, "While\n");
+            printSemanticAstArquivo(node->left, level + 1, file); // condition
+            for (int i = 0; i < level; i++) fprintf(file, "  ");
+            fprintf(file, "Do\n");
+            printSemanticAstArquivo(node->right, level + 1, file); // body
+            break;
+        case NODE_REPITA_ATE:
+            fprintf(file, "Repeat\n");
+            printSemanticAstArquivo(node->right, level + 1, file); // body
+            for (int i = 0; i < level; i++) fprintf(file, "  ");
+            fprintf(file, "Until\n");
+            printSemanticAstArquivo(node->left, level + 1, file); // condition
+            break;
+        case NODE_LER:
+            fprintf(file, "Read: ");
+            const Node* current = node->left;
+            while(current) {
+                if (current->type == NODE_ID_LISTA) {
+                    const Node* id_node = current->right;
+                    if(id_node) fprintf(file, "%s", id_node->value.sval);
+                    current = current->left;
+                    if(current) fprintf(file, ", ");
+                } else if (current->type == NODE_ID) {
+                    fprintf(file, "%s", current->value.sval);
+                    current = NULL;
+                }
+            }
+            fprintf(file, "\n");
+            break;
+        case NODE_MOSTRAR:
+            fprintf(file, "Write\n");
+            printSemanticAstArquivo(node->left, level + 1, file);
+            break;
+        case NODE_ID:
+            fprintf(file, "Id: %s\n", node->value.sval);
+            break;
+        case NODE_NUM_INTEIRO:
+            fprintf(file, "Const: %d\n", node->value.ival);
+            break;
+        case NODE_NUM_REAL:
+            fprintf(file, "Const: %f\n", node->value.fval);
+            break;
+        case NODE_OP_SOMA: fprintf(file, "Op: +\n");  printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_SUB:  fprintf(file, "Op: -\n");  printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_MULT: fprintf(file, "Op: *\n");  printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_DIV:  fprintf(file, "Op: /\n");  printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_LT:   fprintf(file, "Op: <\n");  printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_GT:   fprintf(file, "Op: >\n");  printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_LE:   fprintf(file, "Op: <=\n"); printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_GE:   fprintf(file, "Op: >=\n"); printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_EQ:   fprintf(file, "Op: ==\n"); printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_NE:   fprintf(file, "Op: !=\n"); printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_AND:  fprintf(file, "Op: &&\n"); printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        case NODE_OP_OR:   fprintf(file, "Op: ||\n"); printSemanticAstArquivo(node->left, level+1, file); printSemanticAstArquivo(node->right, level+1, file); break;
+        default:
+            printSemanticAstArquivo(node->left, level, file);
+            printSemanticAstArquivo(node->right, level, file);
+    }
+}

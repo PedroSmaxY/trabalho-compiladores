@@ -24,6 +24,7 @@ TabelaSimbolos* criarTabelaSimbolos(int size) {
     
     table->size = size;
     table->count = 0;
+    table->next_address = 0;  // Inicia endereços em 0
     table->entries = calloc(size, sizeof(EntradaSimbolo*));
     if (!table->entries) {
         fprintf(stderr, "Erro de alocacao de memoria para entradas da tabela\n");
@@ -63,6 +64,9 @@ bool inserirSimbolo(TabelaSimbolos *table, const char *name, DataType type, int 
     
     unsigned int index = hash(name, table->size);
     
+    // Calcula tamanho em bytes: inteiro = 4 bytes, real = 8 bytes
+    int tamanho_bytes = (type == TYPE_INTEIRO) ? 4 : 8;
+    
     // Cria nova entrada
     EntradaSimbolo *entry = malloc(sizeof(EntradaSimbolo));
     if (!entry) {
@@ -73,9 +77,13 @@ bool inserirSimbolo(TabelaSimbolos *table, const char *name, DataType type, int 
     entry->name = strdup(name);
     entry->type = type;
     entry->line = line;
+    entry->address = table->next_address;  // Atribui endereço atual
     entry->next = table->entries[index];
     table->entries[index] = entry;
     table->count++;
+    
+    // Atualiza próximo endereço disponível
+    table->next_address += tamanho_bytes;
     
     return true;
 }
@@ -116,10 +124,35 @@ void imprimirTabelaSimbolos(TabelaSimbolos *table) {
         EntradaSimbolo *entry = table->entries[i];
         while (entry) {
             const char *type_str = (entry->type == TYPE_INTEIRO) ? "inteiro" : "real";
-            printf("  %s: %s (linha %d)\n", entry->name, type_str, entry->line);
+            int tamanho = (entry->type == TYPE_INTEIRO) ? 4 : 8;
+            printf("  %s: %s (linha %d) - endereco: %d bytes, tamanho: %d bytes\n", 
+                   entry->name, type_str, entry->line, entry->address, tamanho);
             entry = entry->next;
         }
     }
     printf("\n");
+}
+
+// Imprime a tabela de símbolos em arquivo
+void imprimirTabelaSimbolosArquivo(TabelaSimbolos *table, FILE *file) {
+    if (!table) {
+        fprintf(file, "Tabela de simbolos vazia\n");
+        return;
+    }
+    
+    fprintf(file, "\n--- Tabela de Simbolos ---\n");
+    fprintf(file, "Total de simbolos: %d\n\n", table->count);
+    
+    for (int i = 0; i < table->size; i++) {
+        EntradaSimbolo *entry = table->entries[i];
+        while (entry) {
+            const char *type_str = (entry->type == TYPE_INTEIRO) ? "inteiro" : "real";
+            int tamanho = (entry->type == TYPE_INTEIRO) ? 4 : 8;
+            fprintf(file, "  %s: %s (linha %d) - endereco: %d bytes, tamanho: %d bytes\n", 
+                    entry->name, type_str, entry->line, entry->address, tamanho);
+            entry = entry->next;
+        }
+    }
+    fprintf(file, "\n");
 }
 

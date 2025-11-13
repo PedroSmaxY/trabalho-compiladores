@@ -1,0 +1,82 @@
+{
+    /* Teste completo de todas as regras semânticas - CÓDIGO COM ERROS */
+    
+    /* ERRO 1: Declaração duplicada */
+    inteiro a, b, c;
+    inteiro a;  /* ERRO: 'a' já foi declarada */
+    real x, y;
+    real x;     /* ERRO: 'x' já foi declarada */
+    
+    /* ERRO 2: Variável não declarada em atribuição */
+    nao_existe = 10;  /* ERRO: 'nao_existe' não foi declarada */
+    a = variavel_inexistente;  /* ERRO: 'variavel_inexistente' não foi declarada */
+    
+    /* ERRO 3: Variável não declarada em expressão */
+    c = a + b + sem_declaracao;  /* ERRO: 'sem_declaracao' não foi declarada */
+    x = y + valor_faltando;      /* ERRO: 'valor_faltando' não foi declarada */
+    
+    /* ERRO 4: Variável não declarada em ler */
+    ler(a, b, nao_declarada);  /* ERRO: 'nao_declarada' não foi declarada */
+    ler(variavel_errada);      /* ERRO: 'variavel_errada' não foi declarada */
+    
+    /* ERRO 5: Tipo incompatível em atribuição (real para inteiro) */
+    a = 10;
+    x = 5.5;
+    a = x;      /* ERRO: tentando atribuir real a inteiro */
+    b = y;      /* ERRO: tentando atribuir real a inteiro */
+    c = media;  /* ERRO: 'media' não declarada E seria real se existisse */
+    
+    /* ERRO 6: Variável não declarada em mostrar */
+    mostrar(nao_existe);  /* ERRO: 'nao_existe' não foi declarada */
+    mostrar(variavel_ausente);  /* ERRO: 'variavel_ausente' não foi declarada */
+    
+    /* ERRO 7: Variável não declarada em condição do se */
+    se (variavel_faltando > 0) entao {  /* ERRO: 'variavel_faltando' não foi declarada */
+        mostrar(a);
+    }
+    
+    /* ERRO 8: Variável não declarada em condição do enquanto */
+    enquanto (sem_declaracao < 10) {  /* ERRO: 'sem_declaracao' não foi declarada */
+        a = a + 1;
+    }
+    
+    /* ERRO 9: Variável não declarada em condição do repita ... ate */
+    repita {
+        a = a - 1;
+    } ate (variavel_inexistente == 0);  /* ERRO: 'variavel_inexistente' não foi declarada */
+    
+    /* ERRO 10: Variável não declarada em operações aritméticas */
+    c = a + b + nao_declarada;  /* ERRO: 'nao_declarada' não foi declarada */
+    x = y * valor_faltando;     /* ERRO: 'valor_faltando' não foi declarada */
+    
+    /* ERRO 11: Variável não declarada em operações de comparação */
+    se (a > sem_declaracao) entao {  /* ERRO: 'sem_declaracao' não foi declarada */
+        mostrar(a);
+    }
+    
+    /* ERRO 12: Variável não declarada em operações lógicas */
+    se ((a > 0) && (nao_existe > 0)) entao {  /* ERRO: 'nao_existe' não foi declarada */
+        mostrar(a);
+    }
+    
+    se ((variavel_ausente > 0) || (b > 0)) entao {  /* ERRO: 'variavel_ausente' não foi declarada */
+        mostrar(b);
+    }
+    
+    /* ERRO 13: Múltiplos erros na mesma expressão */
+    c = nao_existe1 + nao_existe2;  /* ERRO: ambas variáveis não declaradas */
+    
+    /* ERRO 14: Tipo incompatível em atribuição (mesmo com promoção, real não pode ir para inteiro) */
+    real media;
+    media = (a + b) / 2.0;
+    a = media;  /* ERRO: tentando atribuir real a inteiro */
+    
+    /* ERRO 15: Variável não declarada em expressão complexa */
+    mostrar((a + b) / nao_declarada);  /* ERRO: 'nao_declarada' não foi declarada */
+    
+    /* ERRO 16: Variável não declarada em condição complexa */
+    se (((a > 0) && (nao_existe > 0)) || (b > 0)) entao {  /* ERRO: 'nao_existe' não foi declarada */
+        mostrar(a);
+    }
+}
+

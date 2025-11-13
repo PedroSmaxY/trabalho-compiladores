@@ -11,7 +11,8 @@ typedef struct {
 } ResultadoSemantico;
 
 // Função principal de análise semântica
-ResultadoSemantico analiseSemantica(Node *ast_root);
+// Retorna a tabela de símbolos através do parâmetro table_ptr (pode ser NULL se não precisar)
+ResultadoSemantico analiseSemantica(Node *ast_root, TabelaSimbolos **table_ptr);
 
 // Funções auxiliares
 void analisarPrograma(Node *node, TabelaSimbolos *table, ResultadoSemantico *result);
