@@ -41,4 +41,4 @@ add_executable(main src/main.c src/ast.c src/utils.c src/symbol_table.c src/sema
 # Add dependency to ensure generated files are created before main is built
 add_dependencies(main GenerateParserScanner)
 
-configure_file(${CMAKE_SOURCE_DIR}/codigo.txt ${CMAKE_BINARY_DIR}/codigo.txt COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/codigo.p- ${CMAKE_BINARY_DIR}/codigo.p- COPYONLY)
