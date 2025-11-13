@@ -1,0 +1,19 @@
+{
+    /* Teste semântico - código com erros */
+    inteiro a, b;
+    inteiro a;  /* ERRO: declaração duplicada */
+    
+    c = 10;  /* ERRO: variável não declarada */
+    
+    ler(a, nao_existe);  /* ERRO: variável não declarada */
+    
+    real x;
+    x = 5.5;
+    a = x;  /* ERRO: tipo incompatível (real para inteiro) */
+    
+    mostrar(variavel_faltando);  /* ERRO: variável não declarada */
+    
+    se (sem_declaracao > 0) entao {  /* ERRO: variável não declarada */
+        mostrar(a);
+    }
+}

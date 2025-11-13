@@ -1,0 +1,19 @@
+{
+    /* Teste semântico - código correto */
+    inteiro a, b;
+    real x;
+    
+    ler(a, b);
+    x = (a + b) / 2.0;
+    
+    se (x > 5.0) entao {
+        mostrar(x);
+    } senao {
+        mostrar(a);
+    }
+    
+    enquanto (a < 10) {
+        a = a + 1;
+        mostrar(a);
+    }
+}

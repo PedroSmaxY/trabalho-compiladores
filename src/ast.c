@@ -8,6 +8,7 @@
 #include <string.h>
 
 Node* createNode(const NodeType type, Node* left, Node* right) {
+    extern int yylineno;
     Node* newNode = malloc(sizeof(Node));
     if (!newNode) {
         fprintf(stderr, "Erro de alocacao de memoria\n");
@@ -17,7 +18,7 @@ Node* createNode(const NodeType type, Node* left, Node* right) {
     newNode->left = left;
     newNode->right = right;
     newNode->data_type = TYPE_UNDEFINED;
-    newNode->line = 0;
+    newNode->line = yylineno;  // Atribui linha atual
     return newNode;
 }
 
@@ -36,9 +37,11 @@ Node* createFloatNode(const float value) {
 }
 
 Node* createIdNode(const char* sval) {
+    extern int yylineno;
     Node* newNode = createNode(NODE_ID, NULL, NULL);
     newNode->value.sval = strdup(sval);
     newNode->data_type = TYPE_UNDEFINED; // Será definido durante análise semântica
+    newNode->line = yylineno;  // Garante que a linha está correta
     return newNode;
 }
 

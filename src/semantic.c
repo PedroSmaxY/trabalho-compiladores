@@ -104,7 +104,8 @@ DataType analisarExpressao(Node *node, TabelaSimbolos *table, ResultadoSemantico
             EntradaSimbolo *entry = buscarSimbolo(table, var_name);
             
             if (!entry) {
-                fprintf(stderr, "Erro semantico: variavel '%s' nao foi declarada\n", var_name);
+                fprintf(stderr, "Erro semantico na linha %d: variavel '%s' nao foi declarada\n", 
+                        node->line > 0 ? node->line : yylineno, var_name);
                 result->error_count++;
                 return TYPE_UNDEFINED;
             }
@@ -142,7 +143,8 @@ DataType analisarExpressao(Node *node, TabelaSimbolos *table, ResultadoSemantico
             }
             
             if (!verificarCompatibilidadeTipo(left_type, right_type, node->type)) {
-                fprintf(stderr, "Erro semantico: tipos incompatíveis na operacao\n");
+                fprintf(stderr, "Erro semantico na linha %d: tipos incompatíveis na operacao\n", 
+                        node->line > 0 ? node->line : yylineno);
                 result->error_count++;
                 node->data_type = TYPE_UNDEFINED;
                 return TYPE_UNDEFINED;
@@ -183,7 +185,8 @@ void analisarListaIds(Node *node, TabelaSimbolos *table, ResultadoSemantico *res
         EntradaSimbolo *entry = buscarSimbolo(table, var_name);
         
         if (!entry) {
-            fprintf(stderr, "Erro semantico: variavel '%s' nao foi declarada\n", var_name);
+            fprintf(stderr, "Erro semantico na linha %d: variavel '%s' nao foi declarada\n", 
+                    node->line > 0 ? node->line : yylineno, var_name);
             result->error_count++;
             return;
         }
@@ -202,11 +205,13 @@ void processarListaIds(Node *id_list, DataType var_type, TabelaSimbolos *table, 
         // ID único
         const char *var_name = id_list->value.sval;
         if (simboloExiste(table, var_name)) {
-            fprintf(stderr, "Erro semantico: variavel '%s' ja foi declarada\n", var_name);
+            fprintf(stderr, "Erro semantico na linha %d: variavel '%s' ja foi declarada\n", 
+                    line > 0 ? line : yylineno, var_name);
             result->error_count++;
         } else {
             if (!inserirSimbolo(table, var_name, var_type, line)) {
-                fprintf(stderr, "Erro semantico: nao foi possivel inserir variavel '%s'\n", var_name);
+                fprintf(stderr, "Erro semantico na linha %d: nao foi possivel inserir variavel '%s'\n", 
+                        line > 0 ? line : yylineno, var_name);
                 result->error_count++;
             }
         }
@@ -233,7 +238,8 @@ void analisarDeclaracoes(Node *node, TabelaSimbolos *table, ResultadoSemantico *
         Node *id_list = node->right;
         
         if (!tipo_node || !id_list) {
-            fprintf(stderr, "Erro semantico: declaracao incompleta\n");
+            fprintf(stderr, "Erro semantico na linha %d: declaracao incompleta\n", 
+                    node->line > 0 ? node->line : yylineno);
             result->error_count++;
             return;
         }
@@ -244,7 +250,8 @@ void analisarDeclaracoes(Node *node, TabelaSimbolos *table, ResultadoSemantico *
         } else if (tipo_node->type == NODE_TIPO_REAL) {
             var_type = TYPE_REAL;
         } else {
-            fprintf(stderr, "Erro semantico: tipo invalido na declaracao\n");
+            fprintf(stderr, "Erro semantico na linha %d: tipo invalido na declaracao\n", 
+                    node->line > 0 ? node->line : yylineno);
             result->error_count++;
             return;
         }
@@ -271,7 +278,8 @@ void analisarComandos(Node *node, TabelaSimbolos *table, ResultadoSemantico *res
             EntradaSimbolo *entry = buscarSimbolo(table, var_name);
             
             if (!entry) {
-                fprintf(stderr, "Erro semantico: variavel '%s' nao foi declarada\n", var_name);
+                fprintf(stderr, "Erro semantico na linha %d: variavel '%s' nao foi declarada\n", 
+                        node->line > 0 ? node->line : yylineno, var_name);
                 result->error_count++;
             } else {
                 DataType expr_type = analisarExpressao(expr_node, table, result);
@@ -281,8 +289,8 @@ void analisarComandos(Node *node, TabelaSimbolos *table, ResultadoSemantico *res
                     if (entry->type == TYPE_REAL && expr_type == TYPE_INTEIRO) {
                         // OK - promoção implícita
                     } else if (entry->type != expr_type) {
-                        fprintf(stderr, "Erro semantico: tipo incompativel na atribuicao de '%s' (esperado: %s, encontrado: %s)\n",
-                                var_name, obterNomeTipoDados(entry->type), obterNomeTipoDados(expr_type));
+                        fprintf(stderr, "Erro semantico na linha %d: tipo incompativel na atribuicao de '%s' (esperado: %s, encontrado: %s)\n",
+                                node->line > 0 ? node->line : yylineno, var_name, obterNomeTipoDados(entry->type), obterNomeTipoDados(expr_type));
                         result->error_count++;
                     }
                 }
@@ -298,7 +306,8 @@ void analisarComandos(Node *node, TabelaSimbolos *table, ResultadoSemantico *res
         // Analisa condição do if
         DataType cond_type = analisarExpressao(node->left, table, result);
         if (cond_type != TYPE_UNDEFINED && cond_type != TYPE_INTEIRO && cond_type != TYPE_REAL) {
-            fprintf(stderr, "Erro semantico: condicao do 'se' deve ser do tipo inteiro ou real\n");
+            fprintf(stderr, "Erro semantico na linha %d: condicao do 'se' deve ser do tipo inteiro ou real\n", 
+                    node->line > 0 ? node->line : yylineno);
             result->error_count++;
         }
         
@@ -315,7 +324,8 @@ void analisarComandos(Node *node, TabelaSimbolos *table, ResultadoSemantico *res
         // Analisa condição do enquanto
         DataType cond_type = analisarExpressao(node->left, table, result);
         if (cond_type != TYPE_UNDEFINED && cond_type != TYPE_INTEIRO && cond_type != TYPE_REAL) {
-            fprintf(stderr, "Erro semantico: condicao do 'enquanto' deve ser do tipo inteiro ou real\n");
+            fprintf(stderr, "Erro semantico na linha %d: condicao do 'enquanto' deve ser do tipo inteiro ou real\n", 
+                    node->line > 0 ? node->line : yylineno);
             result->error_count++;
         }
         
@@ -328,7 +338,8 @@ void analisarComandos(Node *node, TabelaSimbolos *table, ResultadoSemantico *res
         // Analisa condição do até
         DataType cond_type = analisarExpressao(node->left, table, result);
         if (cond_type != TYPE_UNDEFINED && cond_type != TYPE_INTEIRO && cond_type != TYPE_REAL) {
-            fprintf(stderr, "Erro semantico: condicao do 'ate' deve ser do tipo inteiro ou real\n");
+            fprintf(stderr, "Erro semantico na linha %d: condicao do 'ate' deve ser do tipo inteiro ou real\n", 
+                    node->line > 0 ? node->line : yylineno);
             result->error_count++;
         }
     } else if (node->type == NODE_BLOCO) {
@@ -366,12 +377,14 @@ void analisarPrograma(Node *node, TabelaSimbolos *table, ResultadoSemantico *res
 }
 
 // Função principal de análise semântica
-ResultadoSemantico analiseSemantica(Node *ast_root) {
+// Retorna a tabela de símbolos através do parâmetro table_ptr (pode ser NULL se não precisar)
+ResultadoSemantico analiseSemantica(Node *ast_root, TabelaSimbolos **table_ptr) {
     ResultadoSemantico result = {0, 0};
     
     if (!ast_root) {
         fprintf(stderr, "Erro: arvore sintatica vazia\n");
         result.error_count++;
+        if (table_ptr) *table_ptr = NULL;
         return result;
     }
     
@@ -381,20 +394,24 @@ ResultadoSemantico analiseSemantica(Node *ast_root) {
     if (!table) {
         fprintf(stderr, "Erro: nao foi possivel criar tabela de simbolos\n");
         result.error_count++;
+        if (table_ptr) *table_ptr = NULL;
         return result;
     }
     
     // Analisa o programa
     analisarPrograma(ast_root, table, &result);
     
-    // Imprime tabela de símbolos (para debug)
-    if (result.error_count == 0) {
-        printf("\n--- Tabela de Simbolos ---\n");
-        imprimirTabelaSimbolos(table);
+    // Retorna tabela através do ponteiro (se solicitado)
+    if (table_ptr) {
+        *table_ptr = table;
+    } else {
+        // Se não foi solicitado retornar a tabela, imprime e libera
+        if (result.error_count == 0) {
+            printf("\n--- Tabela de Simbolos ---\n");
+            imprimirTabelaSimbolos(table);
+        }
+        destruirTabelaSimbolos(table);
     }
-    
-    // Libera memória
-    destruirTabelaSimbolos(table);
     
     return result;
 }

@@ -1,0 +1,178 @@
+=== RESULTADO DA ANALISE SEMANTICA ===
+
+Arquivo analisado: ../codigo.p-
+
+--- Arvore Sintatica (ANTES da analise semantica) ---
+Node Type: NODE_PROGRAMA
+  Node Type: NODE_CMD_LISTA
+    Node Type: NODE_BLOCO
+      Node Type: NODE_DECL_LISTA
+        Node Type: NODE_DECL_LISTA
+          Node Type: NODE_DECLARACAO
+            Node Type: NODE_TIPO_INTEIRO
+            Node Type: NODE_ID_LISTA
+              Node Type: NODE_ID_LISTA
+                Node Type: NODE_ID, Value: a
+                Node Type: NODE_ID, Value: b
+              Node Type: NODE_ID, Value: i
+        Node Type: NODE_DECLARACAO
+          Node Type: NODE_TIPO_REAL
+          Node Type: NODE_ID, Value: media
+      Node Type: NODE_CMD_LISTA
+        Node Type: NODE_CMD_LISTA
+          Node Type: NODE_CMD_LISTA
+            Node Type: NODE_CMD_LISTA
+              Node Type: NODE_CMD_LISTA
+                Node Type: NODE_CMD_LISTA
+                  Node Type: NODE_CMD_LISTA
+                    Node Type: NODE_LER
+                      Node Type: NODE_ID_LISTA
+                        Node Type: NODE_ID, Value: a
+                        Node Type: NODE_ID, Value: b
+                  Node Type: NODE_ATRIBUICAO
+                    Node Type: NODE_ID, Value: media
+                    Node Type: NODE_OP_DIV
+                      Node Type: NODE_OP_SOMA
+                        Node Type: NODE_ID, Value: a
+                        Node Type: NODE_ID, Value: b
+                      Node Type: NODE_NUM_INTEIRO, Value: 2
+                Node Type: NODE_SE
+                  Node Type: NODE_OP_GE
+                    Node Type: NODE_ID, Value: media
+                    Node Type: NODE_NUM_INTEIRO, Value: 7
+                  Node Type: NODE_SE_SENAO
+                    Node Type: NODE_BLOCO
+                      Node Type: NODE_CMD_LISTA
+                        Node Type: NODE_MOSTRAR
+                          Node Type: NODE_ID, Value: media
+                    Node Type: NODE_BLOCO
+                      Node Type: NODE_CMD_LISTA
+                        Node Type: NODE_MOSTRAR
+                          Node Type: NODE_ID, Value: media
+              Node Type: NODE_ATRIBUICAO
+                Node Type: NODE_ID, Value: i
+                Node Type: NODE_NUM_INTEIRO, Value: 0
+            Node Type: NODE_ENQUANTO
+              Node Type: NODE_OP_LT
+                Node Type: NODE_ID, Value: i
+                Node Type: NODE_NUM_INTEIRO, Value: 10
+              Node Type: NODE_BLOCO
+                Node Type: NODE_CMD_LISTA
+                  Node Type: NODE_CMD_LISTA
+                    Node Type: NODE_MOSTRAR
+                      Node Type: NODE_ID, Value: i
+                  Node Type: NODE_ATRIBUICAO
+                    Node Type: NODE_ID, Value: i
+                    Node Type: NODE_OP_SOMA
+                      Node Type: NODE_ID, Value: i
+                      Node Type: NODE_NUM_INTEIRO, Value: 1
+          Node Type: NODE_REPITA_ATE
+            Node Type: NODE_OP_EQ
+              Node Type: NODE_ID, Value: i
+              Node Type: NODE_NUM_INTEIRO, Value: 0
+            Node Type: NODE_BLOCO
+              Node Type: NODE_CMD_LISTA
+                Node Type: NODE_CMD_LISTA
+                  Node Type: NODE_ATRIBUICAO
+                    Node Type: NODE_ID, Value: i
+                    Node Type: NODE_OP_SUB
+                      Node Type: NODE_ID, Value: i
+                      Node Type: NODE_NUM_INTEIRO, Value: 1
+                Node Type: NODE_MOSTRAR
+                  Node Type: NODE_ID, Value: i
+        Node Type: NODE_SE
+          Node Type: NODE_OP_OR
+            Node Type: NODE_OP_AND
+              Node Type: NODE_OP_GT
+                Node Type: NODE_ID, Value: a
+                Node Type: NODE_NUM_INTEIRO, Value: 0
+              Node Type: NODE_OP_GT
+                Node Type: NODE_ID, Value: b
+                Node Type: NODE_NUM_INTEIRO, Value: 0
+            Node Type: NODE_OP_GE
+              Node Type: NODE_ID, Value: media
+              Node Type: NODE_NUM_INTEIRO, Value: 5
+          Node Type: NODE_SE_SENAO
+            Node Type: NODE_BLOCO
+              Node Type: NODE_CMD_LISTA
+                Node Type: NODE_MOSTRAR
+                  Node Type: NODE_ID, Value: a
+            Node Type: NODE_BLOCO
+              Node Type: NODE_CMD_LISTA
+                Node Type: NODE_MOSTRAR
+                  Node Type: NODE_ID, Value: b
+
+--- Analise Semantica ---
+Analise semantica concluida sem erros.
+
+--- Tabela de Simbolos ---
+Total de simbolos: 4
+
+  i: inteiro (linha 0) - endereco: 8 bytes, tamanho: 4 bytes
+  media: real (linha 0) - endereco: 12 bytes, tamanho: 8 bytes
+  a: inteiro (linha 0) - endereco: 0 bytes, tamanho: 4 bytes
+  b: inteiro (linha 0) - endereco: 4 bytes, tamanho: 4 bytes
+
+
+--- Arvore Sintatica (DEPOIS da analise semantica) ---
+Id: a
+Id: b
+Id: i
+Id: media
+Read: b, a
+Assign to: media
+  Op: /
+    Op: +
+      Id: a
+      Id: b
+    Const: 2
+If
+  Op: >=
+    Id: media
+    Const: 7
+      Write
+    Id: media
+Else
+      Write
+    Id: media
+Assign to: i
+  Const: 0
+While
+  Op: <
+    Id: i
+    Const: 10
+Do
+        Write
+    Id: i
+  Assign to: i
+    Op: +
+      Id: i
+      Const: 1
+Repeat
+        Assign to: i
+    Op: -
+      Id: i
+      Const: 1
+  Write
+    Id: i
+Until
+  Op: ==
+    Id: i
+    Const: 0
+If
+  Op: ||
+    Op: &&
+      Op: >
+        Id: a
+        Const: 0
+      Op: >
+        Id: b
+        Const: 0
+    Op: >=
+      Id: media
+      Const: 5
+      Write
+    Id: a
+Else
+      Write
+    Id: b
