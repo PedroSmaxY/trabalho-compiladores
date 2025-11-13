@@ -1,0 +1,19 @@
+{
+    /* Teste semântico - código correto (variações) */
+    inteiro i, sum;
+    real avg;
+
+    ler(i);
+    sum = 0;
+    enquanto (i > 0) {
+        sum = sum + i;
+        i = i - 1;
+    }
+
+    avg = sum / 2.0;
+    se (avg >= 0.0) entao {
+        mostrar(avg);
+    } senao {
+        mostrar(sum);
+    }
+}

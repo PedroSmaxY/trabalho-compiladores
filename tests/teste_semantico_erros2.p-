@@ -1,0 +1,12 @@
+{
+    /* Teste semântico - código com erros (variações) */
+    inteiro n, n;             /* ERRO: declaração duplicada */
+    inteiro a;
+    real b;
+
+    ler(n, m);                /* ERRO: variável não declarada: m */
+
+    a = b;                    /* ERRO: tipo incompatível (real para inteiro) */
+
+    mostrar(resultado);       /* ERRO: variável não declarada */
+}
